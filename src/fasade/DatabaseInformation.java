@@ -5,19 +5,20 @@ package fasade;
  */
 public class DatabaseInformation {
 
-    String dbName;
-    String tblName;
-    String[] colNames;
+    String databaseName;
+    String tableName;
+    String[] columnNames;
     String user;
     String password;
+    int numberOfColumns;
 
     public DatabaseInformation() {}
 
     /*
     public void printAll() {
-        System.out.println(dbName);
-        System.out.println(tblName);
-        for(String s:colNames)
+        System.out.println(databaseName);
+        System.out.println(tableName);
+        for(String s:columnNames)
             System.out.print(s + " ");
         System.out.println("\n" + user);
         System.out.println(password);
