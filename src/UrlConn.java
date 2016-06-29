@@ -14,32 +14,43 @@ import org.jsoup.select.Elements;
 class URLConnDemo {
 
     public static void main(String[] args) {
+
         try {
-            // run on arg: http://tidesandcurrents.noaa.gov/stations.html
-            URL url = new URL(args[0]);
-            File htmlSource = new File("C:\\Users\\Bob S\\IdeaProjects\\AIS-Uncooperative-Tracks\\out\\source.html");
-/*
+            // run on arg: http://tidesandcurrents.noaa.gov/
+            URL base = new URL(args[0]);
+            URL url = new URL(base, "stations.html");
+
+            //Local resource to store html file
+            File htmlSource = new File(System.getProperty("user.dir") + "\\out\\source.html");
+
+            /*// Open url connection to arg
             URLConnection urlConnection = url.openConnection();
-            HttpURLConnection connection = null;
+            HttpURLConnection connection = (HttpURLConnection) urlConnection;
 
-            connection = (HttpURLConnection) urlConnection;
-
+            // Read in html file for local storage
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-            String filetext = buildUrlString(in);
+            //Extract string text from body of html
+            String filetext = buildBodyString(in);
 
+            //Store to local resource
             writeToFile(filetext, htmlSource);
 
+            //Open local resource for parsing
             openHtmlSource(htmlSource);*/
 
-            getIds(htmlSource);
+            //Extract each href with ID. NOTE these are all ID's not just the necessary ones
+            for(String href: getIds(htmlSource)) {
+                print(buildUrl(base, href));
+            }
+            
         }
         catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static String buildUrlString(BufferedReader in) {
+    private static String buildBodyString(BufferedReader in) {
         String urlString = "";
         try {
 
@@ -87,18 +98,29 @@ class URLConnDemo {
 
     private static ArrayList<String> getIds(File f) {
         Document doc = null;
+        Elements links = null;
         ArrayList<String> ret = new ArrayList<>();
         try {
             doc = Jsoup.parse(f, "UTF-8");
-            Elements links = doc.select("[href^=\"inventory.html?id=\"]");
+            links = doc.select("span:matchesOwn(present)");
             for(Element link: links) {
-                String absHref = link.attr("href");
+                String absHref = link.firstElementSibling().attr("href");
                 ret.add(absHref);
             }
-            print(ret);
-
         }
         catch (IOException e) {
+            e.printStackTrace();
+        }
+        print("Successfully extracted ID's ");
+        return ret;
+    }
+
+    private static URL buildUrl(URL base, String href) {
+        URL ret = null;
+        try {
+            ret = new URL(base, href);
+        }
+        catch (MalformedURLException e) {
             e.printStackTrace();
         }
         return ret;
