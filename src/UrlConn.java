@@ -4,6 +4,12 @@
 import java.net.*;
 import java.io.*;
 import java.awt.Desktop;
+import java.util.ArrayList;
+
+import org.jsoup.*;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 class URLConnDemo {
 
@@ -12,7 +18,7 @@ class URLConnDemo {
             // run on arg: http://tidesandcurrents.noaa.gov/stations.html
             URL url = new URL(args[0]);
             File htmlSource = new File("C:\\Users\\Bob S\\IdeaProjects\\AIS-Uncooperative-Tracks\\out\\source.html");
-
+/*
             URLConnection urlConnection = url.openConnection();
             HttpURLConnection connection = null;
 
@@ -24,7 +30,9 @@ class URLConnDemo {
 
             writeToFile(filetext, htmlSource);
 
-            openHtml(htmlSource);
+            openHtmlSource(htmlSource);*/
+
+            getIds(htmlSource);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -54,10 +62,10 @@ class URLConnDemo {
         catch (IOException e) {
             e.printStackTrace();
         }
-        print("Succesfully wrote to, " + f.getPath());
+        print("Successfully wrote to, " + f.getPath());
     }
 
-    private static void openHtml(File f) {
+    private static void openHtmlSource(File f) {
         try {
             Desktop.getDesktop().browse(f.toURI());
         }
@@ -65,6 +73,35 @@ class URLConnDemo {
             e.printStackTrace();
         }
         print("Successfully opening, " + f.getPath());
+    }
+
+    private static void openHtmlSource(String path) {
+        try {
+            Desktop.getDesktop().browse((new File(path)).toURI());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        print("Successfully opening, " + path);
+    }
+
+    private static ArrayList<String> getIds(File f) {
+        Document doc = null;
+        ArrayList<String> ret = new ArrayList<>();
+        try {
+            doc = Jsoup.parse(f, "UTF-8");
+            Elements links = doc.select("[href^=\"inventory.html?id=\"]");
+            for(Element link: links) {
+                String absHref = link.attr("href");
+                ret.add(absHref);
+            }
+            print(ret);
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ret;
     }
 
     public static void print(Object o) {
