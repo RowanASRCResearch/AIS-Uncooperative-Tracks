@@ -23,7 +23,7 @@ class URLConnDemo {
             //Local resource to store html file
             File htmlSource = new File(System.getProperty("user.dir") + "\\out\\source.html");
 
-            /*// Open url connection to arg
+            // Open url connection to arg
             URLConnection urlConnection = url.openConnection();
             HttpURLConnection connection = (HttpURLConnection) urlConnection;
 
@@ -37,13 +37,13 @@ class URLConnDemo {
             writeToFile(filetext, htmlSource);
 
             //Open local resource for parsing
-            openHtmlSource(htmlSource);*/
+            openHtmlSource(htmlSource);
 
             //Extract each href with ID. NOTE these are all ID's not just the necessary ones
             for(String href: getIds(htmlSource)) {
-                print(buildUrl(base, href));
+                print(new URL(base, href));
             }
-            
+
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -86,43 +86,32 @@ class URLConnDemo {
         print("Successfully opening, " + f.getPath());
     }
 
-    private static void openHtmlSource(String path) {
+    private static void openHtmlURL(String url) {
         try {
-            Desktop.getDesktop().browse((new File(path)).toURI());
+            Desktop.getDesktop().browse(new URI(url));
         }
-        catch (IOException e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
-        print("Successfully opening, " + path);
+        print("Successfully opening, " + url);
     }
 
     private static ArrayList<String> getIds(File f) {
         Document doc = null;
-        Elements links = null;
+        Elements hrefs = null;
         ArrayList<String> ret = new ArrayList<>();
         try {
             doc = Jsoup.parse(f, "UTF-8");
-            links = doc.select("span:matchesOwn(present)");
-            for(Element link: links) {
-                String absHref = link.firstElementSibling().attr("href");
-                ret.add(absHref);
+            hrefs = doc.select("span:matchesOwn(present)");
+            for(Element link: hrefs) {
+                String href = link.firstElementSibling().attr("href");
+                ret.add(href);
             }
         }
         catch (IOException e) {
             e.printStackTrace();
         }
         print("Successfully extracted ID's ");
-        return ret;
-    }
-
-    private static URL buildUrl(URL base, String href) {
-        URL ret = null;
-        try {
-            ret = new URL(base, href);
-        }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
         return ret;
     }
 
