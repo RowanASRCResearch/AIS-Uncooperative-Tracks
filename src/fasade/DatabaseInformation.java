@@ -1,9 +1,15 @@
 package fasade;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 /**
  * Created by lapost48 on 6/23/2016.
  */
 public class DatabaseInformation {
+
+    private Connection connection;
 
     String databaseName;
     String tableName;
@@ -12,7 +18,33 @@ public class DatabaseInformation {
     String password;
     int numberOfColumns;
 
-    public DatabaseInformation() {}
+    public DatabaseInformation() {
+        try {
+            Class.forName("org.hsqldb.jdbc.JDBCDriver");
+        } catch (Exception e) {
+            System.err.println("ERROR: failed to load HSQLDB JDBC driver.");
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+
+
+    private void openConnection() {
+        try {
+            connection = DriverManager.getConnection("jdbc:hsqldb:mem:" + databaseName, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void closeConnection() {
+        try {
+            connection.close();
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     /*
     public void printAll() {
