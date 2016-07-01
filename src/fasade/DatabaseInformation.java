@@ -11,12 +11,12 @@ public class DatabaseInformation {
 
     private Connection connection;
 
-    String databaseName;
-    String tableName;
-    String[] columnNames;
-    String user;
-    String password;
-    int numberOfColumns;
+    private String databaseName;
+    private String tableName;
+    private String[] columnNames;
+    private String user;
+    private String password;
+    private int numberOfColumns;
 
     public DatabaseInformation() {
         try {
