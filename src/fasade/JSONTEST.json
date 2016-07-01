@@ -2,11 +2,13 @@
   "databaseName":"AIS-Example",
   "tableName":"AIS-Table",
   "columnNames":
-  [
-    "speed",
-    "latitude",
-    "longitude"
-  ],
+  {
+    "time":"DATETIME",
+    "id":"CALLSIGN",
+    "speed":"SPEED",
+    "latitude":"LATITUDE",
+    "longitude":"LONGITUDE"
+  },
   "user":"AIS-User",
   "password":"AIS-Password",
   "columnNumbers":3

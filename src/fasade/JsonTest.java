@@ -13,11 +13,12 @@ public class JsonTest {
 
     public static void main(String[] args) {
         Gson gson = new Gson();
-        DatabaseInformation db = new DatabaseInformation();
+        DatabaseFasade db = new AisDatabaseFasade();
         JsonReader jr;
         try {
             jr = new JsonReader(new FileReader(new File("JSONTEST.json")));
-            db = gson.fromJson(jr, DatabaseInformation.class);
+            db = gson.fromJson(jr, AisDatabaseFasade.class);
+            String test = gson.toJson(db);
             jr.close();
         } catch (IOException e) {
             System.out.println("File Not Found!");
