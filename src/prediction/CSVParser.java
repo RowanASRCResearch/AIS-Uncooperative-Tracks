@@ -1,4 +1,4 @@
-package io.evolution;
+package prediction;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -6,10 +6,7 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import static io.evolution.Constants.*;
 
 /**
  * Created by Roberto Gonzalez on 3/23/2016.
@@ -64,23 +61,23 @@ public class CSVParser {
         //defines the csv column headers to be referenced by name
         try {
             csvRecordIterable = CSVFormat.EXCEL.withHeader(Constants.DATETIME,
-                    MMSI,
-                    LAT,
-                    LONG,
-                    COURSE,
-                    SPEED,
-                    HEADING,
-                    IMO,
-                    NAME,
-                    CALLSIGN,
-                    AISTYPE,
-                    A,
-                    B,
-                    C,
-                    D,
-                    DRAUGHT,
-                    DESTINATION,
-                    ETA).parse(csvReader);
+                    Constants.MMSI,
+                    Constants.LAT,
+                    Constants.LONG,
+                    Constants.COURSE,
+                    Constants.SPEED,
+                    Constants.HEADING,
+                    Constants.IMO,
+                    Constants.NAME,
+                    Constants.CALLSIGN,
+                    Constants.AISTYPE,
+                    Constants.A,
+                    Constants.B,
+                    Constants.C,
+                    Constants.D,
+                    Constants.DRAUGHT,
+                    Constants.DESTINATION,
+                    Constants.ETA).parse(csvReader);
         } catch (IOException e) {
             System.out.println("io exception");
             return false;
@@ -103,42 +100,42 @@ public class CSVParser {
                 //this skips the first record, as it contains header data
                 if (i > 0) {
                     //goes through each portion of the record and appends it to the string
-                    StringBuilder queryBuilder = new StringBuilder("INSERT INTO " + tableName + " VALUES (00,");
-                    queryBuilder.append("'").append(record.get(DATETIME)).append("'");
+                    StringBuilder queryBuilder = new StringBuilder("INSERT INTO " + Constants.tableName + " VALUES (00,");
+                    queryBuilder.append("'").append(record.get(Constants.DATETIME)).append("'");
                     queryBuilder.append(",");
-                    queryBuilder.append("'").append(record.get(MMSI)).append("'");
+                    queryBuilder.append("'").append(record.get(Constants.MMSI)).append("'");
                     queryBuilder.append(",");
-                    queryBuilder.append(Float.parseFloat(record.get(LAT)));
+                    queryBuilder.append(Float.parseFloat(record.get(Constants.LAT)));
                     queryBuilder.append(",");
-                    queryBuilder.append(Float.parseFloat(record.get(LONG)));
+                    queryBuilder.append(Float.parseFloat(record.get(Constants.LONG)));
                     queryBuilder.append(",");
-                    queryBuilder.append(Float.parseFloat(record.get(COURSE)));
+                    queryBuilder.append(Float.parseFloat(record.get(Constants.COURSE)));
                     queryBuilder.append(",");
-                    queryBuilder.append(Float.parseFloat(record.get(SPEED)));
+                    queryBuilder.append(Float.parseFloat(record.get(Constants.SPEED)));
                     queryBuilder.append(",");
-                    queryBuilder.append(Integer.parseInt(record.get(HEADING)));
+                    queryBuilder.append(Integer.parseInt(record.get(Constants.HEADING)));
                     queryBuilder.append(",");
-                    queryBuilder.append("'").append(record.get(IMO)).append("'");
+                    queryBuilder.append("'").append(record.get(Constants.IMO)).append("'");
                     queryBuilder.append(",");
-                    queryBuilder.append("'").append(record.get(NAME)).append("'");
+                    queryBuilder.append("'").append(record.get(Constants.NAME)).append("'");
                     queryBuilder.append(",");
-                    queryBuilder.append("'").append(record.get(CALLSIGN)).append("'");
+                    queryBuilder.append("'").append(record.get(Constants.CALLSIGN)).append("'");
                     queryBuilder.append(",");
-                    queryBuilder.append("'").append(record.get(AISTYPE)).append("'");
+                    queryBuilder.append("'").append(record.get(Constants.AISTYPE)).append("'");
                     queryBuilder.append(",");
-                    queryBuilder.append(Integer.parseInt(record.get(A)));
+                    queryBuilder.append(Integer.parseInt(record.get(Constants.A)));
                     queryBuilder.append(",");
-                    queryBuilder.append(Integer.parseInt(record.get(B)));
+                    queryBuilder.append(Integer.parseInt(record.get(Constants.B)));
                     queryBuilder.append(",");
-                    queryBuilder.append(Integer.parseInt(record.get(C)));
+                    queryBuilder.append(Integer.parseInt(record.get(Constants.C)));
                     queryBuilder.append(",");
-                    queryBuilder.append(Integer.parseInt(record.get(D)));
+                    queryBuilder.append(Integer.parseInt(record.get(Constants.D)));
                     queryBuilder.append(",");
-                    queryBuilder.append(Float.parseFloat(record.get(DRAUGHT)));
+                    queryBuilder.append(Float.parseFloat(record.get(Constants.DRAUGHT)));
                     queryBuilder.append(",");
-                    queryBuilder.append("'").append(record.get(DESTINATION)).append("'");
+                    queryBuilder.append("'").append(record.get(Constants.DESTINATION)).append("'");
                     queryBuilder.append(",");
-                    queryBuilder.append("'").append(record.get(ETA)).append("'");
+                    queryBuilder.append("'").append(record.get(Constants.ETA)).append("'");
                     queryBuilder.append(")");
                     //Prepares the statement to be executed, then executes the statement to input into the database
                     PreparedStatement insertData = c.prepareStatement(queryBuilder.toString());

@@ -1,4 +1,4 @@
-package io.evolution;
+package prediction;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +7,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.IllegalFormatException;
-
-import static io.evolution.Constants.*;
 
 /**
  * //The main will accept  4 arguments, which are the CSV filename
@@ -157,28 +155,28 @@ public class Controller {
             //create AIS Data table
             PreparedStatement createAisDataTable = c.prepareStatement("CREATE TABLE PUBLIC.AISDATA\n" +
                     "(ID INTEGER,\n" +
-                    DATETIME + " VARCHAR(25),\n" +
-                    MMSI + " VARCHAR(25),\n" +
-                    LAT + " FLOAT,\n" +
-                    LONG + " FLOAT,\n" +
-                    COURSE + " FLOAT,\n" +
-                    SPEED + " FLOAT,\n" +
-                    HEADING + " INTEGER,\n" +
-                    IMO + " VARCHAR(25),\n" +
-                    NAME + " VARCHAR(50),\n" +
-                    CALLSIGN + " VARCHAR(25),\n" +
-                    AISTYPE + " VARCHAR(5),\n" +
-                    A + " INTEGER,\n" +
-                    B + " INTEGER,\n" +
-                    C + " INTEGER,\n" +
-                    D + " INTEGER,\n" +
-                    DRAUGHT + " FLOAT,\n" +
-                    DESTINATION + " VARCHAR(25),\n" +
-                    ETA + " VARCHAR(25));");
+                    Constants.DATETIME + " VARCHAR(25),\n" +
+                    Constants.MMSI + " VARCHAR(25),\n" +
+                    Constants.LAT + " FLOAT,\n" +
+                    Constants.LONG + " FLOAT,\n" +
+                    Constants.COURSE + " FLOAT,\n" +
+                    Constants.SPEED + " FLOAT,\n" +
+                    Constants.HEADING + " INTEGER,\n" +
+                    Constants.IMO + " VARCHAR(25),\n" +
+                    Constants.NAME + " VARCHAR(50),\n" +
+                    Constants.CALLSIGN + " VARCHAR(25),\n" +
+                    Constants.AISTYPE + " VARCHAR(5),\n" +
+                    Constants.A + " INTEGER,\n" +
+                    Constants.B + " INTEGER,\n" +
+                    Constants.C + " INTEGER,\n" +
+                    Constants.D + " INTEGER,\n" +
+                    Constants.DRAUGHT + " FLOAT,\n" +
+                    Constants.DESTINATION + " VARCHAR(25),\n" +
+                    Constants.ETA + " VARCHAR(25));");
             createAisDataTable.execute();
             //creates database for kmlGenerator
-            PreparedStatement createdKmlGeneratorTable = c.prepareStatement("CREATE TABLE PUBLIC.KMLPOINTS ("+DATETIME+" INT , "+
-                    LAT+" FLOAT, "+LONG+" FLOAT);");
+            PreparedStatement createdKmlGeneratorTable = c.prepareStatement("CREATE TABLE PUBLIC.KMLPOINTS ("+ Constants.DATETIME+" INT , "+
+                    Constants.LAT+" FLOAT, "+ Constants.LONG+" FLOAT);");
             createdKmlGeneratorTable.execute();
         } catch (SQLException e) {
 

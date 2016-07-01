@@ -1,4 +1,4 @@
-package io.evolution;
+package prediction;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static io.evolution.Constants.*;
+import static prediction.Constants.*;
 import static java.lang.Integer.parseInt;
 
 

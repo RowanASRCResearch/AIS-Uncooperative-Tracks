@@ -1,4 +1,4 @@
-package io.evolution;
+package prediction;
 
 /**
  * Created by Roberto Gonzalez on 4/3/2016.

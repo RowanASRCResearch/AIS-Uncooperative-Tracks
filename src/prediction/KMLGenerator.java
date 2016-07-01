@@ -1,4 +1,4 @@
-package io.evolution;
+package prediction;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import static io.evolution.Constants.*;
 
 /**
  * This class is responsible pulling points from a database
@@ -73,7 +72,7 @@ public class KMLGenerator {
      */
     void pull() throws SQLException {
 
-        PreparedStatement get = connection.prepareStatement("SELECT * FROM PUBLIC.KMLPOINTS ORDER BY "+DATETIME+";");
+        PreparedStatement get = connection.prepareStatement("SELECT * FROM PUBLIC.KMLPOINTS ORDER BY "+ Constants.DATETIME+";");
         ResultSet resultSet = get.executeQuery();
         while (resultSet.next()) {
             points.add(new Point(resultSet.getFloat("latitude"),resultSet.getFloat("longitude"), resultSet.getString("datetime")));
@@ -90,7 +89,7 @@ public class KMLGenerator {
     void pullPath() throws SQLException {
 
         PreparedStatement get = connection.prepareStatement("SELECT * FROM PUBLIC.AISDATA WHERE (MMSI='"
-                + mmsi+ "') ORDER BY " + DATETIME+";");
+                + mmsi+ "') ORDER BY " + Constants.DATETIME+";");
         ResultSet resultSet = get.executeQuery();
         while (resultSet.next()) {
             path.add(new Point(resultSet.getFloat("latitude"),resultSet.getFloat("longitude"), resultSet.getString("datetime")));
@@ -106,7 +105,7 @@ public class KMLGenerator {
         PreparedStatement getPorts = portDBConnect.prepareStatement("SELECT * FROM PUBLIC.PORTS");
         ResultSet resultSet = getPorts.executeQuery();
         while (resultSet.next()){
-            ports.add(new Point(resultSet.getFloat(LAT),resultSet.getFloat(LONG),resultSet.getString("PORTNAME")));
+            ports.add(new Point(resultSet.getFloat(Constants.LAT),resultSet.getFloat(Constants.LONG),resultSet.getString("PORTNAME")));
         }
     }
 
