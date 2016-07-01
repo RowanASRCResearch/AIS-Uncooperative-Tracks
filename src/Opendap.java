@@ -2,50 +2,47 @@
  * Created by Bob S on 6/30/2016.
  */
 
-import java.lang.reflect.Array;
 import java.net.*;
 import java.io.*;
 import java.awt.Desktop;
-import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.IntSummaryStatistics;
-
-import org.jsoup.*;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 public class Opendap {
 
-    private static String beginningDate = "5.10.1992";
+    private static final String baseUrl = "http://podaac-opendap.jpl.nasa.gov/opendap/allData/oscar/preview/L4/oscar_third_deg/";
+    private static final String beginningDate = "5.10.1992";
+    private static int day;
+    private static int mo;
+    private static int year;
+    private static double lat;
+    private static double lon;
+    private static double U;
+    private static double V;
 
     public static void main(String[] args) {
 
         try {
-            URL base = new URL("http://podaac-opendap.jpl.nasa.gov/opendap/allData/oscar/preview/L4/oscar_third_deg/");
-            URL url = new URL(base, buildFileName(args[2]));
+            URL base = new URL(baseUrl);
+            URL url = new URL(base, buildDirecName(args[2]));
 
-            //openHtmlURL(url.toString());
+            parseArgs(args);
 
-            int day = Integer.parseInt(args[0]);
-            int mo = Integer.parseInt(args[1]);
-            int year = Integer.parseInt(args[2]);
+            String urlWithoutDotHtml = url.toString().substring(0, url.toString().length()-4);
 
-            String urlWithoughDotHtml = url.toString().substring(0, url.toString().length()-4);
+            String[] intervals = findTimeIntervals(urlWithoutDotHtml);
 
-            String[] intervals = findTimeIntervals(urlWithoughDotHtml);
-            for(int i = 0; i<intervals.length;i++) {
-                print(intervals[i]);
-            }
+            String timeVal = findTimeVal(intervals, day, mo, year);
+            String latVal = findLatVal(lat);
+            String lonVal = findLonVal(lon);
 
-            String timeVal = findTimeStringVal(intervals, day, mo, year);
-            print(timeVal);
+            U = getUV(urlWithoutDotHtml + "ascii?u" + timeVal + "[0:1:0]" + latVal + lonVal);
+            V = getUV(urlWithoutDotHtml + "ascii?v" + timeVal + "[0:1:0]" + latVal + lonVal);
 
-            String concatUrl = urlWithoughDotHtml + "ascii?u" + timeVal + "[0:1:0][0:1:480][0:1:1200]";
-            openHtmlURL(concatUrl);
+            print(U);
+            print(V);
 
         }
         catch (IOException e) {
@@ -53,26 +50,73 @@ public class Opendap {
         }
     }
 
-    private static String buildFileName(String name) {
+    private static void parseArgs(String[] args) {
+        day = Integer.parseInt(args[0]);
+        mo = Integer.parseInt(args[1]);
+        year = Integer.parseInt(args[2]);
+        lat = Double.parseDouble(args[3]);
+        lon = Double.parseDouble(args[4]);
+    }
+
+    private static String buildDirecName(String name) {
         return "oscar_vel" + name + ".nc.gz.html";
     }
 
-    private static String findTimeStringVal(String[] intervals, int day, int mo, int year) {
+    private static String findLatVal(double lat) {
+        if(lat < -80.0 || lat > 80.0) {
+            throw new IllegalArgumentException("Cannot accept latitude beyond -80.0 or 80.0");
+        }
+        lat  += 80.0;
+        lat *= 3;
+        return "[" + (int) lat + ":1:" + (int) lat + "]";
+    }
+
+    private static String findLonVal(double lon) {
+        if(lon < 20.0) {
+            lon += 360;
+        }
+        lon -= 20;
+        lon *= 3;
+        return "[" + (int) lon + ":1:" + (int) lon + "]";
+    }
+
+    private static double getUV(String path) {
+        double ret = 0.0;
+        try {
+            URL url = new URL(path);
+            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) urlConnection;
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            String body = "";
+
+            while ((line = in.readLine()) != null) {
+                body += line;
+            }
+           ret = Double.parseDouble(body.split(", ")[2]);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    private static String findTimeVal(String[] intervals, int day, int mo, int year) {
 
         int daysSinceStart = findDaysBetween(beginningDate, day + "." + mo + "." + year);
 
         for(int i = 0; i < intervals.length-1; i++) {
             if(daysSinceStart >= Integer.parseInt(intervals[i]) && daysSinceStart < Integer.parseInt(intervals[i+1])) {
-                return "[" + i + ":1:71]";
+                return "[" + i + ":1:" + i + "]";
             }
         }
         return "[71:1:71]";
     }
 
-    private static String[] findTimeIntervals(String urlWithoughDotHtml) {
+    private static String[] findTimeIntervals(String urlWithoutDotHtml) {
 
         String[] ret = null;
-        String path = urlWithoughDotHtml + "ascii?time[0:1:71]";
+        String path = urlWithoutDotHtml + "ascii?time[0:1:71]";
         try {
             URL url = new URL(path);
 
@@ -96,7 +140,7 @@ public class Opendap {
         return ret;
     }
 
-    public static int findDaysBetween(String start, String end) {
+    private static int findDaysBetween(String start, String end) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         int diff = -1;
         try {
@@ -107,36 +151,6 @@ public class Opendap {
             e.printStackTrace();
         }
         return diff;
-    }
-
-    private static ArrayList getU(int mo, int day) {
-        ArrayList ret = new ArrayList();
-        return ret;
-    }
-
-    private static ArrayList getV(int mo, int day) {
-        ArrayList ret = new ArrayList();
-        return ret;
-    }
-
-    private static void openHtmlSource(File f) {
-        try {
-            Desktop.getDesktop().browse(f.toURI());
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        print("Successfully opening, " + f.getPath());
-    }
-
-    private static void openHtmlURL(String url) {
-        try {
-            Desktop.getDesktop().browse(new URI(url));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        print("Successfully opening, " + url);
     }
 
     public static void print(Object o) {
