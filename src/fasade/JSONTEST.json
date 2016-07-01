@@ -1,1 +1,13 @@
-{"dbName":"AIS-Example","tblName":"AIS-Table","colNames":["speed","latitude","longitude"],"user":"AIS-User","password":"AIS-Password"}
+{
+  "databaseName":"AIS-Example",
+  "tableName":"AIS-Table",
+  "columnNames":
+  [
+    "speed",
+    "latitude",
+    "longitude"
+  ],
+  "user":"AIS-User",
+  "password":"AIS-Password",
+  "columnNumbers":3
+}
