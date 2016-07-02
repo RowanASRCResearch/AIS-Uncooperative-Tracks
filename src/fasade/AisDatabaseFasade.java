@@ -17,7 +17,7 @@ public class AisDatabaseFasade extends DatabaseFasade {
         String col = columnNames.get("speed");
         String query = "SELECT " + columnNames.get("time") + "," + col + " FROM " + tableName + " where " + columnNames.get("id") + "=" + id;
 
-        return executeQuery(query);
+        return runQuery(query);
     }
 
 }

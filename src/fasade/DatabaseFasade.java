@@ -35,7 +35,7 @@ public abstract class DatabaseFasade {
         connection = DriverManager.getConnection("jdbc:hsqldb:mem:" + databaseName, user, password);
     }
 
-    protected ResultSet executeQuery(String query) {
+    protected ResultSet runQuery(String query) {
         ResultSet ret = null;
         try {
             openConnection();
