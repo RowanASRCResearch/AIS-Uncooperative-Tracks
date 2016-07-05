@@ -13,12 +13,14 @@ import org.jsoup.select.Elements;
 
 class URLConnDemo {
 
+    private static URL base;
+    private static URL url;
+
     public static void main(String[] args) {
 
         try {
-            // run on arg: http://tidesandcurrents.noaa.gov/
-            URL base = new URL(args[0]);
-            URL url = new URL(base, "stations.html");
+            base = new URL("http://tidesandcurrents.noaa.gov/");
+            url = new URL(base, "stations.html");
 
             //Local resource to store html file
             File htmlSource = new File(System.getProperty("user.dir") + "\\out\\source.html");
@@ -33,16 +35,14 @@ class URLConnDemo {
             //Extract string text from body of html
             String filetext = buildBodyString(in);
 
-            //Store to local resource
+            //Store to local source
             writeToFile(filetext, htmlSource);
 
-            //Open local resource for parsing
-            openHtmlSource(htmlSource);
+            /*//Open local resource for parsing
+            openHtmlSource(htmlSource);*/
 
             //Extract each href with ID. NOTE these are all ID's not just the necessary ones
-            for(String href: getIds(htmlSource)) {
-                print(new URL(base, href));
-            }
+           writeToFile(getUrls(htmlSource), new File(System.getProperty("user.dir") + "\\resources\\station_urls.csv"));
 
         }
         catch (IOException e) {
@@ -66,14 +66,31 @@ class URLConnDemo {
 
     private static void writeToFile(String text, File f) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(f));
-            writer.write(text);
-            writer.close();
+            BufferedWriter br = new BufferedWriter(new FileWriter(f));
+            br.write(text);
+            br.close();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
         print("Successfully wrote to, " + f.getPath());
+    }
+
+    private static void writeToFile(ArrayList<String> ar, File f) {
+        try {
+            BufferedWriter br = new BufferedWriter(new FileWriter(f));
+            StringBuilder sb = new StringBuilder();
+            for (String element : ar) {
+                sb.append(element);
+                sb.append(",");
+            }
+
+            br.write(sb.toString());
+            br.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void openHtmlSource(File f) {
@@ -96,7 +113,7 @@ class URLConnDemo {
         print("Successfully opening, " + url);
     }
 
-    private static ArrayList<String> getIds(File f) {
+    private static ArrayList<String> getUrls(File f) {
         Document doc = null;
         Elements hrefs = null;
         ArrayList<String> ret = new ArrayList<>();
@@ -105,7 +122,7 @@ class URLConnDemo {
             hrefs = doc.select("span:matchesOwn(present)");
             for(Element link: hrefs) {
                 String href = link.firstElementSibling().attr("href");
-                ret.add(href);
+                ret.add(new URL(base, href).toString());
             }
         }
         catch (IOException e) {
