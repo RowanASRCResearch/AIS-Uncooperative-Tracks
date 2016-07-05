@@ -15,6 +15,7 @@ class URLConnDemo {
 
     private static URL base;
     private static URL url;
+    private static final int TIMEOUT_LIM = 0;   // integer value for limit on timeout of jsoup.connect. NOTE 0 is infinity
 
     public static void main(String[] args) {
 
@@ -22,72 +23,35 @@ class URLConnDemo {
             base = new URL("http://tidesandcurrents.noaa.gov/");
             url = new URL(base, "stations.html");
 
-            //Local resource to store html file
-            File htmlSource = new File(System.getProperty("user.dir") + "\\out\\source.html");
+            // Open url connection to static url, Read in html file for local storage as doc.
+            Document doc = Jsoup.connect(url.toString()).timeout(TIMEOUT_LIM).get();
 
-            // Open url connection to arg
-            URLConnection urlConnection = url.openConnection();
-            HttpURLConnection connection = (HttpURLConnection) urlConnection;
+            //Open local resource for browser viewing
+            //openHtmlSource(htmlSource);
 
-            // Read in html file for local storage
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-            //Extract string text from body of html
-            Document doc = Jsoup.connect(url.toString()).timeout(0).get();
-            String bodyText = doc.toString();
-
-            //Store to local source
-            writeToFile(bodyText, htmlSource);
-
-            /*//Open local resource for parsing
-            openHtmlSource(htmlSource);*/
-
-            //Extract each href with ID. NOTE these are all ID's not just the necessary ones
-           writeToFile(getUrls(htmlSource), new File(System.getProperty("user.dir") + "\\resources\\station_urls.csv"));
-
+            //Extract each href with ID, convert each id to viable URL, store URLS in csv.
+            writeToFile(obtainUrls(doc), new File(System.getProperty("user.dir") + "\\resources\\station_urls.csv"));
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void writeToFile(String text, File f) {
-        try {
-            BufferedWriter br = new BufferedWriter(new FileWriter(f));
-            br.write(text);
-            br.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        print("Successfully wrote to, " + f.getPath());
-    }
-
-    private static void writeToFile(ArrayList<String> ar, File f) {
+    private static <T extends Object> void writeToFile(ArrayList<T> ar, File f) {
         try {
             BufferedWriter br = new BufferedWriter(new FileWriter(f));
             StringBuilder sb = new StringBuilder();
-            for (String element : ar) {
-                sb.append(element);
+            for (Object element : ar) {
+                sb.append(element.toString());
                 sb.append(",");
             }
-
             br.write(sb.toString());
             br.close();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private static void openHtmlSource(File f) {
-        try {
-            Desktop.getDesktop().browse(f.toURI());
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        print("Successfully opening, " + f.getPath());
+        print("Successfully wrote to, " + f.getPath());
     }
 
     private static void openHtmlURL(String url) {
@@ -100,16 +64,13 @@ class URLConnDemo {
         print("Successfully opening, " + url);
     }
 
-    private static ArrayList<String> getUrls(File f) {
-        Document doc = null;
-        Elements hrefs = null;
-        ArrayList<String> ret = new ArrayList<>();
+    private static ArrayList<URL> obtainUrls(Document doc) {
+        ArrayList<URL> ret = new ArrayList<URL>();
         try {
-            doc = Jsoup.parse(f, "UTF-8");
-            hrefs = doc.select("span:matchesOwn(present)");
-            for(Element link: hrefs) {
-                String href = link.firstElementSibling().attr("href");
-                ret.add(new URL(base, href).toString());
+            Elements hrefs = doc.select("span:matchesOwn(present)");
+            for(Element url: hrefs) {
+                String href = url.firstElementSibling().attr("href");
+                ret.add(new URL(base, href));
             }
         }
         catch (IOException e) {
