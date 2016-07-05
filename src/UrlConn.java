@@ -33,10 +33,11 @@ class URLConnDemo {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
             //Extract string text from body of html
-            String filetext = buildBodyString(in);
+            Document doc = Jsoup.connect(url.toString()).timeout(0).get();
+            String bodyText = doc.toString();
 
             //Store to local source
-            writeToFile(filetext, htmlSource);
+            writeToFile(bodyText, htmlSource);
 
             /*//Open local resource for parsing
             openHtmlSource(htmlSource);*/
@@ -45,23 +46,9 @@ class URLConnDemo {
            writeToFile(getUrls(htmlSource), new File(System.getProperty("user.dir") + "\\resources\\station_urls.csv"));
 
         }
-        catch (IOException e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private static String buildBodyString(BufferedReader in) {
-        String urlString = "";
-        try {
-
-            String current;
-            while ((current = in.readLine()) != null) {
-                urlString += current;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return urlString;
     }
 
     private static void writeToFile(String text, File f) {
