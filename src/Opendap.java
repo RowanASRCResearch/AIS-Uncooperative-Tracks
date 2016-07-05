@@ -68,16 +68,19 @@ public class Opendap {
             throw new IllegalArgumentException("Cannot accept latitude beyond -80.0 or 80.0");
         }
         lat  += 80.0;
-        lat *= 3;
+        lat *= 3;        print("LONG:" + lat);
         return "[" + (int) lat + ":1:" + (int) lat + "]";
     }
 
     private static String findLonVal(double lon) {
         if(lon < 20.0) {
-            lon += 360;
+            lon += 340.0;
         }
-        lon -= 20;
+        else {
+            lon -= 20.0;
+        }
         lon *= 3;
+        print("LONG:" + lon);
         return "[" + (int) lon + ":1:" + (int) lon + "]";
     }
 
