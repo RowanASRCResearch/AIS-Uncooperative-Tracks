@@ -5,7 +5,6 @@
 import java.net.*;
 import java.io.*;
 import java.awt.Desktop;
-import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -22,32 +21,38 @@ public class Opendap {
     private static double U;
     private static double V;
 
-    public static void main(String[] args) {
-
+    public Opendap(String[] args) {
         try {
-            URL base = new URL(baseUrl);
-            URL url = new URL(base, buildDirecName(args[2]));
-
+            //Take in args
             parseArgs(args);
 
-            String urlWithoutDotHtml = url.toString().substring(0, url.toString().length()-4);
+            //Construct URLS for path to directory and file
+            URL base = new URL(baseUrl);
+            URL url = new URL(base, "oscar_vel" + year + ".nc.gz.html");
 
+            //Save url, decapitating the '.html' extension
+            String urlWithoutDotHtml = url.toString().substring(0, url.toString().length()-4);
             String[] intervals = findTimeIntervals(urlWithoutDotHtml);
 
+            //Collect value for time range, lat range and lon range
             String timeVal = findTimeVal(intervals, day, mo, year);
             String latVal = findLatVal(lat);
             String lonVal = findLonVal(lon);
 
-            U = getUV(urlWithoutDotHtml + "ascii?u" + timeVal + "[0:1:0]" + latVal + lonVal);
-            V = getUV(urlWithoutDotHtml + "ascii?v" + timeVal + "[0:1:0]" + latVal + lonVal);
-
-            print(U);
-            print(V);
-
+            //Discover U and V
+            U = findUV(urlWithoutDotHtml + "ascii?u" + timeVal + "[0:1:0]" + latVal + lonVal);
+            V = findUV(urlWithoutDotHtml + "ascii?v" + timeVal + "[0:1:0]" + latVal + lonVal);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        //Run-me
+        Opendap odap = new Opendap(args);
+        print(odap.getU());
+        print(odap.getV());
     }
 
     private static void parseArgs(String[] args) {
@@ -56,10 +61,6 @@ public class Opendap {
         year = Integer.parseInt(args[2]);
         lat = Double.parseDouble(args[3]);
         lon = Double.parseDouble(args[4]);
-    }
-
-    private static String buildDirecName(String name) {
-        return "oscar_vel" + name + ".nc.gz.html";
     }
 
     private static String findLatVal(double lat) {
@@ -80,7 +81,7 @@ public class Opendap {
         return "[" + (int) lon + ":1:" + (int) lon + "]";
     }
 
-    private static double getUV(String path) {
+    private static double findUV(String path) {
         double ret = 0.0;
         try {
             URL url = new URL(path);
@@ -146,11 +147,28 @@ public class Opendap {
         try {
             Date dateStart = simpleDateFormat.parse(start);
             Date dateEnd = simpleDateFormat.parse(end);
-            diff = Math.round((dateEnd.getTime() - dateStart.getTime()) /  86400000);
+            diff = Math.round((dateEnd.getTime() - dateStart.getTime()) / 86400000);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return diff;
+    }
+    public double getU() {
+        return U;
+    }
+
+    public double getV() {
+        return V;
+    }
+
+    private static void openHtmlURL(URL url) {
+        try {
+            Desktop.getDesktop().browse(url.toURI());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        print("Successfully opening, " + url);
     }
 
     public static void print(Object o) {
