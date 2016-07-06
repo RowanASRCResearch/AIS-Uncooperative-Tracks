@@ -2,6 +2,7 @@ package fasade;
 
 import java.sql.*;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by lapost48 on 6/23/2016.
@@ -57,6 +58,14 @@ public abstract class DatabaseFasade {
             System.err.println("Error disconnecting from database!");
             System.err.println(e.getMessage());
         }
+    }
+
+    public String getColumnNames() {
+        String ret = "";
+        for (String s : columnNames.values()) {
+            ret += s + ",";
+        }
+        return ret.substring(0, ret.length());
     }
 
 }

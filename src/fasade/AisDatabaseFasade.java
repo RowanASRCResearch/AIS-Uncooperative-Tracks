@@ -1,5 +1,7 @@
 package fasade;
 
+import org.apache.commons.csv.CSVRecord;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -52,6 +54,36 @@ public class AisDatabaseFasade extends DatabaseFasade {
         try {
             runQuery(query);
             runQuery(kmlQuery);
+        } catch(SQLException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean insertCsvEntry(CSVRecord record) {
+        //goes through each portion of the record and appends it to the string
+        String queryBuilder = "INSERT INTO " + tableName
+                + " VALUES (00,"
+                + record.get(columnNames.get("time"))
+                + record.get(columnNames.get("id"))
+                + Float.parseFloat(record.get(columnNames.get("latitude")))
+                + Float.parseFloat(record.get(columnNames.get("longitude")))
+                + Float.parseFloat(record.get(columnNames.get("course")))
+                + Float.parseFloat(record.get(columnNames.get("speed")))
+                + Integer.parseInt(record.get(columnNames.get("heading")))
+                + record.get(columnNames.get("imo"))
+                + record.get(columnNames.get("name"))
+                + record.get(columnNames.get("name"))
+                + record.get(columnNames.get("type"))
+                + Integer.parseInt(record.get(columnNames.get("bowLength")))
+                + Integer.parseInt(record.get(columnNames.get("sternLength")))
+                + Integer.parseInt(record.get(columnNames.get("c")))
+                + Integer.parseInt(record.get(columnNames.get("d")))
+                + Float.parseFloat(record.get(columnNames.get("draft")))
+                + record.get(columnNames.get("destination"))
+                + record.get(columnNames.get("eta"));
+        try {
+            runQuery(queryBuilder.toString());
         } catch(SQLException e) {
             return false;
         }
