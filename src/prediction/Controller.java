@@ -1,5 +1,7 @@
 package prediction;
 
+import fasade.AisDatabaseFasade;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,8 +16,7 @@ import java.util.IllegalFormatException;
  * , and Date of last AIS signal.
  */
 public class Controller {
-    static Connection dbConnect;
-    static Connection portDBConnect;
+    static AisDatabaseFasade database = new AisDatabaseFasade();
     static String csv;
     static String mmsi;
     static String time;
@@ -36,23 +37,22 @@ public class Controller {
      * @throws CSVParserException
      */
     public static void main(String[] args) throws SQLException, IOException, CSVParserException {
-        boolean database = createDatabase();
-        if(database != true)
+        if(database.createTable() != true)
         {
             System.err.println("Does not compute");
             System.exit(1);
         }
 
         parseArgs(args);
-        parse = new CSVParser(new File(csv), dbConnect);
+        parse = new CSVParser(new File(csv));
         parse.iterateCsv();
 
         //initiating modules, also pass the database connection to them
         // Area Prediction Algorithm takes db, ship MMSI number, and time after signal loss
-        AreaPredictor areaPredict = new AreaPredictor(dbConnect, mmsi, date, time, maxTurn);
+        AreaPredictor areaPredict = new AreaPredictor(mmsi, date, time, maxTurn);
 
         //to grab xml file
-        KMLGenerator kmlGen = new KMLGenerator(mmsi, dbConnect,portDBConnect);  // KML generator
+        KMLGenerator kmlGen = new KMLGenerator(mmsi);  // KML generator
         //File file = new File(“Insert Path to file here\AIS_DATA.xml”); // sets the file as xml file
 
         // executes the methods needed
@@ -119,68 +119,6 @@ public class Controller {
         System.out.println("Time entered: " + time);
         System.out.println("Current Max Turn: " + maxTurn);
         return true;
-    }
-
-    /**
-     * Creates the database that will hold the AIS data set that was parsed from
-     * the CSV file.
-     *
-     * @return check
-     */
-    public static boolean createDatabase() {
-        try {
-            Class.forName("org.hsqldb.jdbc.JDBCDriver");
-        } catch (Exception e) {
-            System.err.println("ERROR: failed to load HSQLDB JDBC driver.");
-            e.printStackTrace();
-            return false;
-        }
-        try {
-            dbConnect = DriverManager.getConnection("jdbc:hsqldb:mem:mydb", "SA", "");
-            portDBConnect = DriverManager.getConnection("jdbc:hsqldb:file:portDb;shutdown=true;ifexists=true", "SA", "");
-            createTable(dbConnect);
-        } catch (SQLException e) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Defines the aisData table headers
-     *
-     * @param c Connection to JDBC datatbase
-     */
-    public static void createTable(Connection c) {
-        try {
-            //create AIS Data table
-            PreparedStatement createAisDataTable = c.prepareStatement("CREATE TABLE PUBLIC.AISDATA\n" +
-                    "(ID INTEGER,\n" +
-                    Constants.DATETIME + " VARCHAR(25),\n" +
-                    Constants.MMSI + " VARCHAR(25),\n" +
-                    Constants.LAT + " FLOAT,\n" +
-                    Constants.LONG + " FLOAT,\n" +
-                    Constants.COURSE + " FLOAT,\n" +
-                    Constants.SPEED + " FLOAT,\n" +
-                    Constants.HEADING + " INTEGER,\n" +
-                    Constants.IMO + " VARCHAR(25),\n" +
-                    Constants.NAME + " VARCHAR(50),\n" +
-                    Constants.CALLSIGN + " VARCHAR(25),\n" +
-                    Constants.AISTYPE + " VARCHAR(5),\n" +
-                    Constants.A + " INTEGER,\n" +
-                    Constants.B + " INTEGER,\n" +
-                    Constants.C + " INTEGER,\n" +
-                    Constants.D + " INTEGER,\n" +
-                    Constants.DRAUGHT + " FLOAT,\n" +
-                    Constants.DESTINATION + " VARCHAR(25),\n" +
-                    Constants.ETA + " VARCHAR(25));");
-            createAisDataTable.execute();
-            //creates database for kmlGenerator
-            PreparedStatement createdKmlGeneratorTable = c.prepareStatement("CREATE TABLE PUBLIC.KMLPOINTS ("+ Constants.DATETIME+" INT , "+
-                    Constants.LAT+" FLOAT, "+ Constants.LONG+" FLOAT);");
-            createdKmlGeneratorTable.execute();
-        } catch (SQLException e) {
-
-        }
     }
 
     /**

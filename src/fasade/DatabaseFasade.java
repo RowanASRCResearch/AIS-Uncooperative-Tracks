@@ -10,7 +10,7 @@ public abstract class DatabaseFasade {
 
     private final boolean testing = true;
 
-    protected Connection connection;
+    private Connection connection;
 
     protected String databaseName;
     protected String tableName;
@@ -31,26 +31,32 @@ public abstract class DatabaseFasade {
         }
     }
 
-    protected void openConnection() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:hsqldb:mem:" + databaseName, user, password);
+    protected void openConnection() {
+        try {
+            connection = DriverManager.getConnection("jdbc:hsqldb:mem:" + databaseName, user, password);
+        } catch(SQLException e) {
+            System.err.println("Error connecting to database!");
+            System.err.println(e.getMessage());
+        }
     }
 
-    protected ResultSet runQuery(String query) {
+    protected ResultSet runQuery(String query) throws SQLException {
         ResultSet ret = null;
-        try {
-            openConnection();
-            Statement statement = connection.createStatement();
-            ret = statement.executeQuery(query);
-            closeConnection();
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
+        openConnection();
+        Statement statement = connection.createStatement();
+        ret = statement.executeQuery(query);
+        closeConnection();
 
         return ret;
     }
 
-    protected void closeConnection() throws SQLException {
-        connection.close();
+    protected void closeConnection() {
+        try {
+            connection.close();
+        } catch(SQLException e) {
+            System.err.println("Error disconnecting from database!");
+            System.err.println(e.getMessage());
+        }
     }
 
 }
