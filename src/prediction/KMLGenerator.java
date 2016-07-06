@@ -3,10 +3,6 @@ package prediction;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -21,25 +17,17 @@ public class KMLGenerator {
      */
     String mmsi;
     /**
-     * The Connection.
-     */
-    Connection connection;
-    /**
      * The Points.
      */
-    ArrayList<Point> points = new ArrayList<Point>(); //polygon points
+    ArrayList<Point> points = new ArrayList<>(); //polygon points
     /**
      * The Path.
      */
-    ArrayList<Point> path = new ArrayList<Point>(); //polygon points
+    ArrayList<Point> path = new ArrayList<>(); //polygon points
     /**
      * The Ports.
      */
     ArrayList<Point> ports = new ArrayList<>();
-    /**
-     * The Port db connection.
-     */
-    Connection portDBConnect;
     /**
      * The Index.
      */
@@ -50,63 +38,37 @@ public class KMLGenerator {
      * Instantiates a new Kml generator.
      *
      * @param mmsi          the mmsi
-     * @param connection    the connection
-     * @param portDBConnect the port db connect
      */
-    public KMLGenerator(String mmsi,Connection connection , Connection portDBConnect){
-        this.connection = connection;
+    public KMLGenerator(String mmsi){
         this.mmsi = mmsi;
-        this.portDBConnect = portDBConnect;
     }
 
     /**
      * The Placemarks.
      */
-    ArrayList<Point> placemarks = new ArrayList<Point>(); //points where pins are dropped.
+    ArrayList<Point> placemarks = new ArrayList<>(); //points where pins are dropped.
 
     /**
      *
      * Pulls the points making up the predicted area from database.
-     *
-     * @throws SQLException the sql exception
      */
-    void pull() throws SQLException {
-
-        PreparedStatement get = connection.prepareStatement("SELECT * FROM PUBLIC.KMLPOINTS ORDER BY "+ Constants.DATETIME+";");
-        ResultSet resultSet = get.executeQuery();
-        while (resultSet.next()) {
-            points.add(new Point(resultSet.getFloat("latitude"),resultSet.getFloat("longitude"), resultSet.getString("datetime")));
-            // System.out.println(resultSet.getFloat("latitude") +", "+resultSet.getFloat("longitude")+", "+resultSet.getString("datetime"));
-        }
+    void pull() {
+        points.addAll(Controller.database.getKML());
 
     }
 
     /**
      *Pulls the points making up the path of the vessel.
-     *
-     * @throws SQLException the sql exception
      */
-    void pullPath() throws SQLException {
-
-        PreparedStatement get = connection.prepareStatement("SELECT * FROM PUBLIC.AISDATA WHERE (MMSI='"
-                + mmsi+ "') ORDER BY " + Constants.DATETIME+";");
-        ResultSet resultSet = get.executeQuery();
-        while (resultSet.next()) {
-            path.add(new Point(resultSet.getFloat("latitude"),resultSet.getFloat("longitude"), resultSet.getString("datetime")));
-        }
-
+    void pullPath() {
+        points.addAll(Controller.database.getKMLPath(mmsi));
     }
 
     /**
      * Pulls the points representing known ports from database.
-     * @throws SQLException the sql exception
      */
-    void pullPorts() throws SQLException{
-        PreparedStatement getPorts = portDBConnect.prepareStatement("SELECT * FROM PUBLIC.PORTS");
-        ResultSet resultSet = getPorts.executeQuery();
-        while (resultSet.next()){
-            ports.add(new Point(resultSet.getFloat(Constants.LAT),resultSet.getFloat(Constants.LONG),resultSet.getString("PORTNAME")));
-        }
+    void pullPorts() {
+        points.addAll(Controller.database.getPorts());
     }
 
     /**
@@ -285,85 +247,6 @@ public class KMLGenerator {
         timeStamp += ".kml";
         timeStamp = "output/"+timeStamp;
         return timeStamp;
-    }
-
-
-    /**
-     * The type Point.
-     */
-    public class Point {
-        /**
-         * The Latitude.
-         */
-        float latitude,
-        /**
-         * The Longitude.
-         */
-        longitude;
-        /**
-         * The Description.
-         */
-        String  description;
-
-        /**
-         * Instantiates a new Point.
-         *
-         * @param latitude  the latitude
-         * @param longitude the longitude
-         */
-        Point(float latitude, float longitude) {
-            this.latitude = latitude;
-            this.longitude = longitude;
-        }
-
-        /**
-         * Instantiates a new Point.
-         *
-         * @param latitude    the latitude
-         * @param longitude   the longitude
-         * @param description the description
-         */
-        Point(float latitude, float longitude, String description) {
-            this.latitude = latitude;
-            this.longitude = longitude;
-            this.description = description;
-        }
-
-        /**
-         * Gets latitude.
-         *
-         * @return the latitude
-         */
-        public float getLatitude() {
-            return latitude;
-        }
-
-        /**
-         * Gets longitude.
-         *
-         * @return the longitude
-         */
-        public float getLongitude() {
-            return longitude;
-        }
-
-        /**
-         * Gets description.
-         *
-         * @return the description
-         */
-        public String getDescription() {
-            return description;
-        }
-
-        /**
-         * Gets coordinate.
-         *
-         * @return the coordinate
-         */
-        public String getCoordinate() {
-            return ("" + longitude + latitude);
-        }
     }
 
 }

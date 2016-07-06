@@ -1,9 +1,11 @@
 package fasade;
 
 import org.apache.commons.csv.CSVRecord;
+import prediction.Point;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Created by lapost48 on 7/1/2016.
@@ -30,7 +32,7 @@ public class AisDatabaseFasade extends DatabaseFasade {
 
     public boolean insertCsvEntry(CSVRecord record) {
         //goes through each portion of the record and appends it to the string
-        String queryBuilder = "INSERT INTO " + tableName
+        String query = "INSERT INTO " + tableName
                 + " VALUES (00,"
                 + record.get(columnNames.get("time"))
                 + record.get(columnNames.get("id"))
@@ -51,7 +53,7 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + record.get(columnNames.get("destination"))
                 + record.get(columnNames.get("eta"));
         try {
-            runQuery(queryBuilder.toString());
+            runQuery(query);
         } catch(SQLException e) {
             return false;
         }
@@ -129,6 +131,51 @@ public class AisDatabaseFasade extends DatabaseFasade {
             return false;
         }
         return true;
+    }
+
+    public ArrayList<Point> getKML() {
+        String query = "SELECT * FROM PUBLIC.KMLPOINTS "
+                + "ORDER BY "+ columnNames.get("time");
+        try {
+            ArrayList<Point> pointList = new ArrayList<>();
+            ResultSet rs = runQuery(query);
+            while(rs.next())
+                pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), rs.getString("datetime")));
+            return pointList;
+        } catch(SQLException e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Point> getKMLPath(String id) {
+        String query = "SELECT * FROM PUBLIC.AISDATA "
+                + "WHERE MMSI=" + id
+                + " ORDER BY " + columnNames.get("time");
+        try {
+            ArrayList<Point> pointList = new ArrayList<>();
+            ResultSet rs = runQuery(query);
+            while(rs.next())
+                pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), rs.getString("datetime")));
+            return pointList;
+        } catch(SQLException e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public ArrayList<Point> getPorts() {
+        String query = "SELECT * FROM PUBLIC.PORTS";
+        try {
+            ArrayList<Point> pointList = new ArrayList<>();
+            ResultSet rs = runQuery(query);
+            while(rs.next())
+                pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), rs.getString("datetime")));
+            return pointList;
+        } catch(SQLException e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
     }
 
 }

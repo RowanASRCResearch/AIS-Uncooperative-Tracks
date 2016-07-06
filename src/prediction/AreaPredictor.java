@@ -1,13 +1,10 @@
 package prediction;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static prediction.Constants.*;
 import static java.lang.Integer.parseInt;
 
 
@@ -26,9 +23,9 @@ public class AreaPredictor {
     private String lastContactTime;
     private float maxTurn = 180;
     private float vesselTurnRate;
-    private ArrayList<Point> leftCoordinates = new ArrayList<Point>();
-    private ArrayList<Point> rightCoordinates = new ArrayList<Point>();
-    private ArrayList<Point> forwardCoordinates = new ArrayList<Point>();
+    private ArrayList<Point> leftCoordinates = new ArrayList<>();
+    private ArrayList<Point> rightCoordinates = new ArrayList<>();
+    private ArrayList<Point> forwardCoordinates = new ArrayList<>();
 
     /**
      * Instantiates a new Area predictor.
@@ -83,9 +80,7 @@ public class AreaPredictor {
         float timeToSeconds = time * 60;
 
         //The distance traveled by the vessel, in meters.
-        float distance = (knotsToKps * timeToSeconds);
-
-        return distance;
+        return (knotsToKps * timeToSeconds);
     }
 
 
@@ -259,82 +254,4 @@ public class AreaPredictor {
         vesselTurnRate = 5f;
     }
 
-
-    /**
-     * The type Point.
-     */
-    public class Point {
-        /**
-         * The Latitude.
-         */
-        float latitude,
-        /**
-         * The Longitude.
-         */
-        longitude;
-        /**
-         * The Description.
-         */
-        String description;
-
-        /**
-         * Instantiates a new Point.
-         *
-         * @param latitude  the latitude
-         * @param longitude the longitude
-         */
-        Point(float latitude, float longitude) {
-            this.latitude = latitude;
-            this.longitude = longitude;
-        }
-
-        /**
-         * Instantiates a new Point.
-         *
-         * @param latitude    the latitude
-         * @param longitude   the longitude
-         * @param description the description
-         */
-        Point(float latitude, float longitude, String description) {
-            this.latitude = latitude;
-            this.longitude = longitude;
-            this.description = description;
-        }
-
-        /**
-         * Gets latitude.
-         *
-         * @return the latitude
-         */
-        public float getLatitude() {
-            return latitude;
-        }
-
-        /**
-         * Gets longitude.
-         *
-         * @return the longitude
-         */
-        public float getLongitude() {
-            return longitude;
-        }
-
-        /**
-         * Gets description.
-         *
-         * @return the description
-         */
-        public String getDescription() {
-            return description;
-        }
-
-        /**
-         * Gets coordinate.
-         *
-         * @return the coordinate
-         */
-        public String getCoordinate() {
-            return ("" + longitude + latitude);
-        }
-    }
 }
