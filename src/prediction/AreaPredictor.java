@@ -20,7 +20,6 @@ import static java.lang.Integer.parseInt;
 public class AreaPredictor {
 
     private float[] initialCoordinates = new float[2];
-    private Connection dbConnect;
     private int travelTime;
     private float vesselSpeed;
     private float vesselCourse;
@@ -34,20 +33,16 @@ public class AreaPredictor {
     /**
      * Instantiates a new Area predictor.
      *
-     * @param dbConnect  The database connection
      * @param mmsi       The MMSI number of the vessel being located.
      * @param date       the date
      * @param travelTime The minutes passed since experiencing a loss-of-signal.
      * @throws SQLException An SQL exception.
      */
-    AreaPredictor(Connection dbConnect, String mmsi, String date, String travelTime, Float maxTurn) throws SQLException {
+    AreaPredictor(String mmsi, String date, String travelTime, Float maxTurn) throws SQLException {
         this.travelTime = parseInt((travelTime));
-        this.dbConnect = dbConnect;
         this.maxTurn = maxTurn;
-        PreparedStatement get = dbConnect.prepareStatement("SELECT * FROM aisData WHERE (MMSI='"
-                + mmsi + "' AND DATETIME LIKE '%" + date + "%') ORDER BY " + DATETIME + " DESC LIMIT 1;");
-        ResultSet resultSet = get.executeQuery();
-        vesselSize(dbConnect, mmsi);
+        ResultSet resultSet = Controller.database.getData(mmsi, date);
+        vesselSize(mmsi);
         while (resultSet.next()) {
             String[] dateSplit = resultSet.getString(DATETIME).split(" ");
             lastContactTime = dateSplit[1];
@@ -56,25 +51,7 @@ public class AreaPredictor {
             vesselSpeed = resultSet.getFloat(SPEED);
             vesselCourse = resultSet.getFloat(COURSE);
         }
-        insertCoord(0, initialCoordinates[0], initialCoordinates[1]);
-    }
-
-    /**
-     * Insert a coordinate
-     *
-     * @param time      the time
-     * @param latitude  the latitude
-     * @param longitude the longitude
-     * @return true is successful, false otherwise
-     */
-    public boolean insertCoord(int time, float latitude, float longitude) {
-        try {
-            PreparedStatement insertCoord = dbConnect.prepareStatement("INSERT INTO PUBLIC.KMLPOINTS VALUES ('" + time + "'," + latitude + "," + longitude + ");");
-            insertCoord.execute();
-        } catch (SQLException e) {
-            return false;
-        }
-        return true;
+        Controller.database.insertLocation(0, initialCoordinates[0], initialCoordinates[1]);
     }
 
     /**
@@ -216,18 +193,18 @@ public class AreaPredictor {
     public void populateDB() {
         int pointCounter = 1;
         for (Point p : leftCoordinates) {
-            insertCoord(pointCounter, p.getLatitude(), p.getLongitude());
+            Controller.database.insertLocation(pointCounter, p.getLatitude(), p.getLongitude());
             pointCounter++;
         }
 
         for (Point p : forwardCoordinates) {
-            insertCoord(pointCounter, p.getLatitude(), p.getLongitude());
+            Controller.database.insertLocation(pointCounter, p.getLatitude(), p.getLongitude());
             pointCounter++;
         }
 
         for (int i = rightCoordinates.size() - 1; i >= 0; i--) {
             Point p = new Point(rightCoordinates.get(i).getLatitude(), rightCoordinates.get(i).getLongitude());
-            insertCoord(pointCounter, p.getLatitude(), p.getLongitude());
+            Controller.database.insertLocation(pointCounter, p.getLatitude(), p.getLongitude());
             pointCounter++;
         }
     }
@@ -272,22 +249,10 @@ public class AreaPredictor {
      * If it is, then is sets the vesselTurnRate to 3 degrees. Otherwise, vesselTurnRate is set to 5 degrees.
      *
      * @param mmsi      the targeted vessel's MMSI number
-     * @param dbConnect the connection to the database
      */
-    void vesselSize(Connection dbConnect, String mmsi) throws SQLException {
-        //pulls points out of database
-        PreparedStatement get = dbConnect.prepareStatement("SELECT * FROM aisData WHERE( MMSI='" + mmsi + "');");
-        ResultSet resultSet = get.executeQuery();
-        resultSet.next();
-
-        //retrieve the bow length of the vessel from the database
-        int bowLength = resultSet.getInt("A");
-
-        //retrieve the stern length of the vessel from the database
-        int sternLength = resultSet.getInt("B");
-
+    void vesselSize(String mmsi) {
         //if the total length of the vessel is greater than or equal to 100 meters
-        if ((bowLength + sternLength) >= 100) {
+        if (Controller.database.getVesselSize(mmsi) >= 100) {
             vesselTurnRate = 3f;
             return;
         }
