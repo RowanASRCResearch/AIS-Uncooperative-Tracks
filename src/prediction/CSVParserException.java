@@ -3,12 +3,12 @@ package prediction;
 /**
  * The type Csv parser exception.
  */
-public class CSVParserException extends Exception{
+class CSVParserException extends Exception{
     /**
      * Instantiates a new Csv parser exception.
      *
      */
-    public CSVParserException() {
+    CSVParserException() {
         super("There was a fatal error");
     }
 }

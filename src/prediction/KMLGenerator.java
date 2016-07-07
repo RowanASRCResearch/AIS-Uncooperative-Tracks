@@ -11,7 +11,7 @@ import java.util.Date;
  * and generating a file containing those points with the appropriate formatting,
  * which allows the user to visualise the output of the algorithm.
  */
-public class KMLGenerator {
+class KMLGenerator {
     /**
      * The MMSI.
      */
@@ -39,7 +39,7 @@ public class KMLGenerator {
      *
      * @param mmsi          the mmsi
      */
-    public KMLGenerator(String mmsi){
+    KMLGenerator(String mmsi){
         this.mmsi = mmsi;
     }
 

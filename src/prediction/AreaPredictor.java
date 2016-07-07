@@ -1,11 +1,7 @@
 package prediction;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-
-import static java.lang.Integer.parseInt;
 
 
 /**
@@ -14,7 +10,7 @@ import static java.lang.Integer.parseInt;
  * passed since the vessel experienced a loss-of-signal.
  */
 
-public class AreaPredictor {
+class AreaPredictor {
 
     private float[] initialCoordinates = new float[2];
     private int travelTime;
@@ -33,21 +29,17 @@ public class AreaPredictor {
      * @param mmsi       The MMSI number of the vessel being located.
      * @param date       the date
      * @param travelTime The minutes passed since experiencing a loss-of-signal.
-     * @throws SQLException An SQL exception.
      */
-    AreaPredictor(String mmsi, String date, String travelTime, Float maxTurn) throws SQLException {
-        this.travelTime = parseInt((travelTime));
+    AreaPredictor(String mmsi, String date, String travelTime, Float maxTurn) {
+        this.travelTime = Integer.parseInt((travelTime));
         this.maxTurn = maxTurn;
-        ResultSet resultSet = Controller.database.getData(mmsi, date);
+        String[] dateSplit = Controller.database.getLastContact(mmsi, date);
+        lastContactTime = dateSplit[1];
+        initialCoordinates = Controller.database.getLastLocation(mmsi, date);
+        vesselSpeed = Controller.database.getLastSpeed(mmsi, date);
+        vesselCourse = Controller.database.getLastCourse(mmsi, date);
         vesselSize(mmsi);
-        while (resultSet.next()) {
-            String[] dateSplit = resultSet.getString(DATETIME).split(" ");
-            lastContactTime = dateSplit[1];
-            initialCoordinates[0] = resultSet.getFloat(LAT);
-            initialCoordinates[1] = resultSet.getFloat(LONG);
-            vesselSpeed = resultSet.getFloat(SPEED);
-            vesselCourse = resultSet.getFloat(COURSE);
-        }
+
         Controller.database.insertLocation(0, initialCoordinates[0], initialCoordinates[1]);
     }
 

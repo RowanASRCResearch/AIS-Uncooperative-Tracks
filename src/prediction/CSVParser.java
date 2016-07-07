@@ -8,7 +8,7 @@ import java.io.*;
 /**
  * Created by Roberto Gonzalez on 3/23/2016.
  */
-public class CSVParser {
+class CSVParser {
 
     //global variables
     private Iterable<CSVRecord> csvRecordIterable;

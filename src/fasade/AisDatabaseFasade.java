@@ -92,17 +92,71 @@ public class AisDatabaseFasade extends DatabaseFasade {
         return true;
     }
 
-    public ResultSet getData(String id, String date) {
+    public String[] getLastContact(String id, String date) {
         String query = "SELECT * FROM " + tableName
                 + "WHERE (MMSI=" + id
                 + " AND DATETIME LIKE %" + date + "%) "
                 + "ORDER BY " + columnNames.get("time")
                 + " DESC LIMIT 1";
         try {
-            return runQuery(query);
+            ResultSet rs = runQuery(query);
+            rs.last();
+            String[] dateSplit = rs.getString(columnNames.get("time")).split(" ");
+            return dateSplit;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return null;
+        }
+    }
+
+    public float[] getLastLocation(String id, String date) {
+        String query = "SELECT * FROM " + tableName
+                + "WHERE (MMSI=" + id
+                + " AND DATETIME LIKE %" + date + "%) "
+                + "ORDER BY " + columnNames.get("time")
+                + " DESC LIMIT 1";
+        try {
+            ResultSet rs = runQuery(query);
+            rs.last();
+            float[] latLong = {rs.getFloat(columnNames.get("latitude")), rs.getFloat(columnNames.get("longitude"))};
+            return latLong;
+        } catch(SQLException e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public float getLastSpeed(String id, String date) {
+        String query = "SELECT * FROM " + tableName
+                + "WHERE (MMSI=" + id
+                + " AND DATETIME LIKE %" + date + "%) "
+                + "ORDER BY " + columnNames.get("time")
+                + " DESC LIMIT 1";
+        try {
+            ResultSet rs = runQuery(query);
+            rs.last();
+            float speed = rs.getFloat(columnNames.get("speed"));
+            return speed;
+        } catch(SQLException e) {
+            System.err.println(e.getMessage());
+            return Float.MAX_VALUE;
+        }
+    }
+
+    public float getLastCourse(String id, String date) {
+        String query = "SELECT * FROM " + tableName
+                + "WHERE (MMSI=" + id
+                + " AND DATETIME LIKE %" + date + "%) "
+                + "ORDER BY " + columnNames.get("time")
+                + " DESC LIMIT 1";
+        try {
+            ResultSet rs = runQuery(query);
+            rs.last();
+            float course = rs.getFloat(columnNames.get("course"));
+            return course;
+        } catch(SQLException e) {
+            System.err.println(e.getMessage());
+            return Float.MAX_VALUE;
         }
     }
 
