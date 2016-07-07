@@ -41,10 +41,71 @@ public class Parser {
      * @param file the file
      * @throws IOException the io exception
      */
-    Parser(String file) throws IOException {
+    Parser(String file) {
         System.out.println("Parser: Start");
         System.out.println("Parser: opening file");
         this.file = new File(file); //assigns the file to private var
+
+    }
+
+    /**
+     * main
+     *
+     * @param args the input arguments
+     * @throws IOException the io exception
+     */
+    public static void main(String[] args) throws IOException {
+
+        Parser p = new Parser("testfile.kml");
+    }
+
+    /**
+     * this method should parse the tide
+     * html and returns an entry as a string
+     *
+     * @return String entry
+     * @throws IOException
+     */
+    String parseTideHtml() throws IOException {
+        String entry = "";
+        String lineFromFile = "";
+        Scanner scanner = new Scanner(file);
+        while (scanner.hasNextLine()) {
+            lineFromFile = scanner.nextLine(); //puts line in String
+            if (lineFromFile.contains("<table class=\"table table-condensed\">")) { //check if line contains tag
+                while (scanner.hasNextLine()) {
+                    if (lineFromFile.contains("</table>")) {
+                        lineFromFile += "\n" + scanner.nextLine();
+                        break;
+                    } else {
+
+                        entry += "\n" + lineFromFile;
+                    }
+                }
+
+            } else {
+                if (lineFromFile.contains("<table class=\"table table-condensed\" style=\"margin-bottom: 0px;\">")) {
+                    while (scanner.hasNextLine()) {
+                        if (lineFromFile.contains("</table>")) {
+                            lineFromFile += "\n" + scanner.nextLine();
+                            break;
+                        } else {
+
+                            entry += "\n" + lineFromFile;
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+        System.out.println(entry);
+
+        return entry;
+    }
+
+    void parseKml() throws IOException {
         System.out.println("Parser: getting tags content");
         this.tag = "Snippet";
         ArrayList<String> snippet = getTagContent(getPlacemarkContent());
@@ -104,17 +165,6 @@ public class Parser {
         }
 
         System.out.println("Parser: End");
-    }
-
-    /**
-     * main
-     *
-     * @param args the input arguments
-     * @throws IOException the io exception
-     */
-    public static void main(String[] args) throws IOException {
-
-        Parser p = new Parser("testfile.kml");
     }
 
     /**

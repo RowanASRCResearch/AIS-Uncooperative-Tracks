@@ -50,13 +50,19 @@ public class JsonGenerator {
      * @throws IOException the io exception
      */
     public static void main(String[] args) throws IOException {
-        Scraper scraper = new Scraper();
+      /*   Scraper scraper = new Scraper();
         scraper.download("http://www.ndbc.noaa.gov/kml/marineobs_as_kml.php?sort=owner", "testfile.kml");
         Parser p = new Parser("testfile.kml");
+        p.parseKml();
         JsonGenerator gen = new JsonGenerator(p.table.length, p.table[0].length, p.table);
         String str = gen.generate();
         gen.makeFile(str);
-        System.out.println(str);
+        System.out.println(str);*/
+
+        Scraper scraper = new Scraper();
+        scraper.download("http://tidesandcurrents.noaa.gov/stationhome.html?id=9444090", "tide.html");
+        Parser p = new Parser("tide.html");
+        p.parseTideHtml();
 
     }
 

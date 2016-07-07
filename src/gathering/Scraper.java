@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
 
 /**
  * Created by Research on 6/29/2016.
@@ -25,7 +26,7 @@ public class Scraper {
     public static void main(String[] args) throws IOException {
         Scraper scraper = new Scraper();
         //scraper.download("http://www.ndbc.noaa.gov/kml/marineobs_as_kml.php?sort=owner","testfile.kml");
-        scraper.scrape("http://tidesandcurrents.noaa.gov/stationhome.html?id=9449639");
+        scraper.scrape("http://tidesandcurrents.noaa.gov/stationhome.html?id=9444090");
     }
 
     /**
@@ -38,6 +39,8 @@ public class Scraper {
      */
     public String scrape(String str) throws IOException {
         String content = "";
+        String line;
+        boolean check;
         // Make a URL to the web page
         URL url = new URL(str);
 
@@ -46,14 +49,48 @@ public class Scraper {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
-        String line = null;
-        Document doc;
+        ArrayList<String> list = new ArrayList<>();
+
         // read each line and write to System.out
         while ((line = br.readLine()) != null) {
-            doc = Jsoup.parse(line);
+            content = "";
+            check = true;
+            if (line.contains("<table")) {
+                while (check) {
+                    if (!line.contains("</table>")) {
+                        content += "\n" + line;
+                    } else {
+                        content += "\n" + line;
+                        check = false;
+                    }
+                    line = br.readLine();
 
-            System.out.println(doc.getElementsByTag("div"));
-            content += line;
+
+                }
+                content = content.toLowerCase();
+                content = content.replace("<table>", "");
+                content = content.replace("<table class=\"table table-condensed\">", "");
+                content = content.replace("<i class='icon-ok'>", "");
+                content = content.replace("</i>", "");
+                content = content.replace("<thead>", "");
+                content = content.replace("<td class=\"elevvalue\">", "");
+                content = content.replace("<tbody>", "");
+                content = content.replace("</tbody>", "");
+                content = content.replace("<th>", "");
+                content = content.replace("</th>", "");
+                content = content.replace("</thead>", "");
+                content = content.replace("<td>", "");
+                content = content.replace("<tr>", "");
+                content = content.replace("</table>", "");
+                content = content.replace("</td>", "");
+                content = content.replace("</tr>", "");
+
+                list.add(content);
+            }
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println("\n no " + i + ": " + list.get(i));
         }
 
         return content;
