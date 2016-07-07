@@ -16,6 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by Research on 6/29/2016.
  */
+//TODO: make tide info into JSON
 public class Scraper {
     /**
      * main.
@@ -26,7 +27,7 @@ public class Scraper {
     public static void main(String[] args) throws IOException {
         Scraper scraper = new Scraper();
         //scraper.download("http://www.ndbc.noaa.gov/kml/marineobs_as_kml.php?sort=owner","testfile.kml");
-        scraper.scrape("http://tidesandcurrents.noaa.gov/stationhome.html?id=9444090");
+        scraper.scrape("http://tidesandcurrents.noaa.gov/stationhome.html?id=9449639");
     }
 
     /**

@@ -16,7 +16,7 @@ import static jdk.nashorn.internal.runtime.JSONFunctions.parse;
  * creates a csv file where the information from the tags classified
  */
 
-
+//TODO: make part of scraper as one method
 public class Parser {
 
 

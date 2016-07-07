@@ -20,12 +20,14 @@ import java.io.IOException;
  * 9:"wave direction"
  * 10:"water temperature"
  */
+//TODO: make constructor take 2 arguments(list, 2d array)
 public class JsonGenerator {
 
     private String[][] graph; //2d array containing all items
     private int x;
     private int y;
     private String[] properties = new String[]{"station", "coordinates", "datetime", "winds", "atmospheric pressure", "air temperature", "dew Point", "wave height", "wave period", "wave direction", "water temperature"};
+    private String[] ppties = new String[]{"station", "latitude", "longitude", "max", "min", "mean", "water level", "air temperature", "water temperature", "air pressure"};
 
     /**
      * constructor
