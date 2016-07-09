@@ -1,8 +1,5 @@
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
@@ -25,11 +22,11 @@ public class curve_generator
      */
     public static void main(String[] args) throws IOException
     {
-        PointF start = new PointF(-100f, 0.0f);
-        PointF dest = new PointF(-50f, 35f);
-        PointF end = new PointF(-110f, 50.0f);
+        PointF start = new PointF(-100f, 100f);
+        PointF dest = new PointF(100f, -100f);
+        PointF end = new PointF(-150f, -150f);
         PointF end2 = findReflected(end, start, dest);
-        float radius = 30f;
+        float radius = 200f;
         float period = 3f;
 
         /*
@@ -41,11 +38,12 @@ public class curve_generator
         the first boolean represents the choice of shortest curve or longest
         next boolean represents the side of inflection false is up ward curving, true is downward
         */
-        List<PointF> points = generateCurve(start, end, radius, period, true, false);
+        List<PointF> points = generateCurve(start, end, radius, period, true, true);
+        List<PointF> points2 = generateCurve(start, end2, radius, period, true, false);
+        List<PointF> points3 = generateCurve(end, end2, 225f, period, true, false);
 
         System.out.println(points);
 
-        //UNCOMMENT THE FOLLOWING TO YIELD IMAGE
         // Calculate the bounds of the curve
         Rectangle2D.Float bounds = new Rectangle2D.Float(points.get(0).x, points.get(0).y, 0, 0);
         for (int i = 1; i < points.size(); ++i) {
@@ -54,7 +52,7 @@ public class curve_generator
         bounds.add(start.x, start.y);
         bounds.add(end.x, end.y);
 
-        BufferedImage img = new BufferedImage((int) (bounds.width - bounds.x + 50), (int) (bounds.height - bounds.y + 50), BufferedImage.TYPE_4BYTE_ABGR_PRE);
+        BufferedImage img = new BufferedImage((int) (bounds.width - bounds.x + 500), (int) (bounds.height - bounds.y + 500), BufferedImage.TYPE_4BYTE_ABGR_PRE);
         Graphics2D g = img.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -78,6 +76,29 @@ public class curve_generator
 
         }
 
+        for (int i = 0; i < points2.size(); ++i) {
+            if (i > 0) {
+                Line2D.Float f = new Line2D.Float(points2.get(i - 1).x, points2.get(i - 1).y, points2.get(i).x, points2.get(i).y);
+                System.out.println("Dist : " + f.getP1().distance(f.getP2()));
+                g.draw(f);
+            }
+
+            g.fill(new Ellipse2D.Float(points2.get(i).x - 0.8f, points2.get(i).y - 0.8f, 1.6f, 1.6f));
+
+        }
+
+        g.setColor(Color.ORANGE);
+        for (int i = 0; i < points3.size(); ++i) {
+            if (i > 0) {
+                Line2D.Float f = new Line2D.Float(points3.get(i - 1).x, points3.get(i - 1).y, points3.get(i).x, points3.get(i).y);
+                System.out.println("Dist : " + f.getP1().distance(f.getP2()));
+                g.draw(f);
+            }
+
+            g.fill(new Ellipse2D.Float(points3.get(i).x - 0.8f, points3.get(i).y - 0.8f, 1.6f, 1.6f));
+
+        }
+
         g.setColor(Color.GREEN);
         Line2D.Float f = new Line2D.Float(start.x, start.y, dest.x, dest.y);
         System.out.println("Dist : " + f.getP1().distance(f.getP2()));
@@ -87,6 +108,7 @@ public class curve_generator
         g.fill(new Ellipse2D.Float(start.x - 1, start.y - 1, 3, 3));
         g.fill(new Ellipse2D.Float(end.x - 1, end.y - 1, 3, 3));
         g.fill(new Ellipse2D.Float(dest.x - 1, dest.y -1, 3,3));
+        g.fill(new Ellipse2D.Float(end2.x - 1, end2.y - 1, 3, 3));
 
 
         g.dispose();
@@ -99,9 +121,18 @@ public class curve_generator
         float y;
 
         //first find eq of line start to end
+        float m = (end.y - start.y) / (end.x - start.x);
+        float b = end.y - (m * end.x);
 
+        float d = (focus.x + ((focus.y - b) * m)) / (1 + (m * m));
+        x = (2 * d) - focus.x;
+        y = (2 * d * m) - focus.y + (2 * b);
 
         return new PointF(x, y);
+    }
+
+    static void print(Object o)  {
+        System.out.println(o.toString());
     }
 
     static class PointF
