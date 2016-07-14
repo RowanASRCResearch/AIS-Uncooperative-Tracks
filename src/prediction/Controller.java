@@ -1,11 +1,13 @@
 package prediction;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import fasade.AisDatabaseFasade;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.IllegalFormatException;
 
 /**
  * //The main will accept  4 arguments, which are the CSV filename
@@ -13,7 +15,7 @@ import java.util.IllegalFormatException;
  * , and Date of last AIS signal.
  */
 public class Controller {
-    static AisDatabaseFasade database = new AisDatabaseFasade();
+    static AisDatabaseFasade database;
     static String csv;
     static String mmsi;
     static String time;
@@ -28,19 +30,33 @@ public class Controller {
      * Runs execute() function  at the end which handles methods
      * called within modules.
      *
-     * @param args CSV Filename, MMSI, Time, Date, Max Turn Radius
      * @throws SQLException
      * @throws IOException
      * @throws CSVParserException
      */
-    public static void main(String[] args) throws SQLException, IOException, CSVParserException {
+    public Controller(String csv, String mmsi, String date, String time) throws IOException, SQLException, CSVParserException {
+        JsonReader jr;
+        try {
+            jr = new JsonReader(new FileReader(new File("src/fasade/JSONTEST.json")));
+            database = new Gson().fromJson(jr, AisDatabaseFasade.class);
+            jr.close();
+        } catch (IOException e) {
+            System.out.println("File Not Found!");
+        }
+
+
+        this.csv = csv;
+        this.mmsi = mmsi;
+        this.date = date;
+        this.time = time;
+
         if(database.createTable() != true)
         {
             System.err.println("Does not compute");
             System.exit(1);
         }
 
-        parseArgs(args);
+        parseArgs();
         parse = new CSVParser(new File(csv));
         parse.iterateCsv();
 
@@ -61,55 +77,54 @@ public class Controller {
      * Will check if all of the inputs are in proper format and will
      * return an error if any arguements are not in correct format
      *
-     * @param args CSV Filename, MMSI, Time, Date
      * @return check
      */
-    public static boolean parseArgs(String args[]) {
-        if (args.length >= 4) {
-            try {
-                csv = args[0];
-            } catch (IllegalFormatException s) {
-                System.err.println("IllegalFormatException: Please enter a Filename");
-                System.exit(1);
-            }
-
-            try {
-                mmsi = args[1];
-            } catch (NumberFormatException n) {
-                System.err.println("NumberFormatException: Please enter an MMSI  number");
-                System.exit(1);
-            }
-
-            try {
-                date = args[2];
-            } catch (IllegalFormatException t) {
-                System.err.println("IllegalFormatException: Please enter Date");
-                System.exit(1);
-            }
-
-            try {
-                time = args[3];
-            } catch (IllegalFormatException t) {
-                System.err.println("IllegalFormatException: Please enter Time");
-                System.exit(1);
-            }
-            if(args.length == 5)
-            {
-                try{
-                    maxTurn = Float.parseFloat(args[4]);
-                }
-                catch (IllegalFormatException t) {
-                    System.err.println("IllegalFormatException: Please enter a maximum turn radius for the vessel. Default is automatically set to 180 degrees.");
-                    System.exit(1);
-                }
-            }
-        }
-        else {
-            System.err.println("Invalid Number of Arguements.");
-            System.err.println("Please Enter in the following order:");
-            System.err.println("CSV Filename, MMSI Number, Date, Time, Max Turn");
-            System.exit(1);
-        }
+    public static boolean parseArgs() {
+//        if (args.length >= 4) {
+//            try {
+//                csv = args[0];
+//            } catch (IllegalFormatException s) {
+//                System.err.println("IllegalFormatException: Please enter a Filename");
+//                System.exit(1);
+//            }
+//
+//            try {
+//                mmsi = args[1];
+//            } catch (NumberFormatException n) {
+//                System.err.println("NumberFormatException: Please enter an MMSI  number");
+//                System.exit(1);
+//            }
+//
+//            try {
+//                date = args[2];
+//            } catch (IllegalFormatException t) {
+//                System.err.println("IllegalFormatException: Please enter Date");
+//                System.exit(1);
+//            }
+//
+//            try {
+//                time = args[3];
+//            } catch (IllegalFormatException t) {
+//                System.err.println("IllegalFormatException: Please enter Time");
+//                System.exit(1);
+//            }
+//            if(args.length == 5)
+//            {
+//                try{
+//                    maxTurn = Float.parseFloat(args[4]);
+//                }
+//                catch (IllegalFormatException t) {
+//                    System.err.println("IllegalFormatException: Please enter a maximum turn radius for the vessel. Default is automatically set to 180 degrees.");
+//                    System.exit(1);
+//                }
+//            }
+//        }
+//        else {
+//            System.err.println("Invalid Number of Arguements.");
+//            System.err.println("Please Enter in the following order:");
+//            System.err.println("CSV Filename, MMSI Number, Date, Time, Max Turn");
+//            System.exit(1);
+//        }
         System.out.println("CSV entered: " + csv);
         System.out.println("MMSI entered: " + mmsi);
         System.out.println("Date entered: " + date);
