@@ -1,15 +1,28 @@
 {
-  "databaseName":"AIS-Example",
-  "tableName":"AIS-Table",
+  "databaseName":"mydb",
+  "tableName":"AisTable",
   "columnNames":
   {
     "time":"DATETIME",
-    "id":"CALLSIGN",
-    "speed":"SPEED",
+    "id":"MMSI",
     "latitude":"LATITUDE",
-    "longitude":"LONGITUDE"
+    "longitude":"LONGITUDE",
+    "speed":"SPEED",
+    "course":"COURSE",
+    "heading":"HEADING",
+    "imo":"IMO",
+    "name":"NAME",
+    "callsign":"CALLSIGN",
+    "type":"AISTYPE",
+    "bowLength":"A",
+    "sternLength":"B",
+    "c":"C",
+    "d":"D",
+    "draught":"DRAUGHT",
+    "destination":"DESTINATION",
+    "eta":"ETA"
   },
-  "user":"AIS-User",
-  "password":"AIS-Password",
+  "user":"SA",
+  "password":"",
   "columnNumbers":3
 }

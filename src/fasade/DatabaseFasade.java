@@ -45,8 +45,26 @@ public abstract class DatabaseFasade {
         ResultSet ret = null;
         openConnection();
         Statement statement = connection.createStatement();
-        ret = statement.executeQuery(query);
-        closeConnection();
+        try {
+            ret = statement.executeQuery(query);
+        } finally {
+            statement.close();
+            closeConnection();
+        }
+
+        return ret;
+    }
+
+    protected boolean run(String query) throws SQLException {
+        boolean ret;
+        openConnection();
+        Statement statement = connection.createStatement();
+        try {
+            ret = statement.execute(query);
+        } finally {
+            statement.close();
+            closeConnection();
+        }
 
         return ret;
     }

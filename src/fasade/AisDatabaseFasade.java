@@ -53,15 +53,14 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + record.get(columnNames.get("destination"))
                 + record.get(columnNames.get("eta"));
         try {
-            runQuery(query);
+            return run(query);
         } catch(SQLException e) {
             return false;
         }
-        return true;
     }
 
     public boolean createTable() {
-        String query = "CREATE TABLE PUBLIC.AISDATA "
+        String query = "CREATE TABLE " + tableName + " "
                 + "(ID INTEGER,"
                 + columnNames.get("time") + " VARCHAR(25),"
                 + columnNames.get("id") + " VARCHAR(25),"
@@ -84,19 +83,19 @@ public class AisDatabaseFasade extends DatabaseFasade {
         String kmlQuery = "CREATE TABLE PUBLIC.KMLPOINTS ("+ columnNames.get("time")+" INT , "+
                 columnNames.get("latitude")+" FLOAT, "+ columnNames.get("longitude")+" FLOAT);";
         try {
-            runQuery(query);
-            runQuery(kmlQuery);
+            run(query);
+            run(kmlQuery);
+            return true;
         } catch(SQLException e) {
             return false;
         }
-        return true;
     }
 
     public String[] getLastContact(String id, String date) {
         String query = "SELECT * FROM " + tableName
-                + "WHERE (MMSI=" + id
-                + " AND DATETIME LIKE %" + date + "%) "
-                + "ORDER BY " + columnNames.get("time")
+                + " WHERE MMSI=" + id
+                + " AND DATETIME LIKE '%" + date + "%'"
+                + " ORDER BY " + columnNames.get("time")
                 + " DESC LIMIT 1";
         try {
             ResultSet rs = runQuery(query);
@@ -104,7 +103,7 @@ public class AisDatabaseFasade extends DatabaseFasade {
             String[] dateSplit = rs.getString(columnNames.get("time")).split(" ");
             return dateSplit;
         } catch(SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println(e.getMessage() + "\n" + query);
             return null;
         }
     }
@@ -179,12 +178,11 @@ public class AisDatabaseFasade extends DatabaseFasade {
     public boolean insertLocation(int time, float latitude, float longitude) {
         String query = "INSERT INTO PUBLIC.KMLPOINTS VALUES (" + time + "," + latitude + "," + longitude + ")";
         try {
-            runQuery(query);
+            return run(query);
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return false;
         }
-        return true;
     }
 
     public ArrayList<Point> getKML() {
