@@ -61,10 +61,10 @@ public class JsonGenerator {
         gen.makeFile(str);
         System.out.println(str);*/
 
-        Scraper scraper = new Scraper();
-        scraper.download("http://tidesandcurrents.noaa.gov/stationhome.html?id=9444090", "tide.html");
-        Parser p = new Parser("tide.html");
-        p.parseTideHtml();
+       // Scraper scraper = new Scraper();
+       // scraper.download("http://tidesandcurrents.noaa.gov/stationhome.html?id=9444090", "tide.html");
+       // Parser p = new Parser("tide.html");
+       // p.parseTideHtml();
 
     }
 
