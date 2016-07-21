@@ -2,16 +2,16 @@ package fasade;
 
 import java.sql.*;
 import java.util.HashMap;
-import java.util.Set;
 
 /**
- * Created by lapost48 on 6/23/2016.
+ * @author: Nick LaPosta
  */
 public abstract class DatabaseFasade {
 
     private final boolean testing = true;
 
     private Connection connection;
+    private String driver;
 
     protected String databaseName;
     protected String tableName;
@@ -23,9 +23,9 @@ public abstract class DatabaseFasade {
     public DatabaseFasade() {
         if(!testing) {
             try {
-                Class.forName("org.hsqldb.jdbc.JDBCDriver");
+                Class.forName(driver);
             } catch (Exception e) {
-                System.err.println("ERROR: failed to load HSQLDB JDBC driver.");
+                System.err.println("ERROR: failed to load MySQL JDBC driver.");
                 e.printStackTrace();
                 System.exit(91);
             }
@@ -34,7 +34,7 @@ public abstract class DatabaseFasade {
 
     protected void openConnection() {
         try {
-            connection = DriverManager.getConnection("jdbc:hsqldb:mem:" + databaseName, user, password);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/:" + databaseName, user, password);
         } catch(SQLException e) {
             System.err.println("Error connecting to database!");
             System.err.println(e.getMessage());

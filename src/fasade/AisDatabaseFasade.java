@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Created by lapost48 on 7/1/2016.
+ * @author: Nick LaPosta
  */
 public class AisDatabaseFasade extends DatabaseFasade {
 
