@@ -33,7 +33,7 @@ public class AisDatabaseFasade extends DatabaseFasade {
     public boolean insertCsvEntry(CSVRecord record) {
         //goes through each portion of the record and appends it to the string
         String query = "INSERT INTO " + tableName
-                + " VALUES (00,"
+                + " VALUES ("
                 + record.get(columnNames.get("time"))
                 + record.get(columnNames.get("id"))
                 + Float.parseFloat(record.get(columnNames.get("latitude")))
@@ -43,7 +43,7 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + Integer.parseInt(record.get(columnNames.get("heading")))
                 + record.get(columnNames.get("imo"))
                 + record.get(columnNames.get("name"))
-                + record.get(columnNames.get("name"))
+                + record.get(columnNames.get("callsign"))
                 + record.get(columnNames.get("type"))
                 + Integer.parseInt(record.get(columnNames.get("bowLength")))
                 + Integer.parseInt(record.get(columnNames.get("sternLength")))

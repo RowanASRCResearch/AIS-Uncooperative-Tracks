@@ -78,12 +78,17 @@ public abstract class DatabaseFasade {
         }
     }
 
-    public String getColumnNames() {
-        String ret = "";
-        for (String s : columnNames.values()) {
-            ret += s + ",";
+    public String[] getColumnNames() {
+        String[] ret = new String[columnNames.size()];
+        int index = 0;
+        for(String s : columnNames.values()) {
+            if(!s.equals("ID")) {
+                System.out.println(s);
+                ret[index] = s;
+                index++;
+            }
         }
-        return ret.substring(0, ret.length());
+        return ret;
     }
 
 }

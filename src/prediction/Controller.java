@@ -50,11 +50,11 @@ public class Controller {
         this.date = date;
         this.time = time;
 
-        if(database.createTable() != true)
-        {
-            System.err.println("Does not compute");
-            System.exit(1);
-        }
+//        if(database.createTable() != true)
+//        {
+//            System.err.println("Does not compute");
+//            System.exit(1);
+//        }
 
         parseArgs();
         parse = new CSVParser(new File(csv));
