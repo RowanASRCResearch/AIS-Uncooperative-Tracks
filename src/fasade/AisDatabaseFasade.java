@@ -49,7 +49,7 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + Integer.parseInt(record.get(columnNames.get("sternLength")))
                 + Integer.parseInt(record.get(columnNames.get("c")))
                 + Integer.parseInt(record.get(columnNames.get("d")))
-                + Float.parseFloat(record.get(columnNames.get("draft")))
+                + Float.parseFloat(record.get(columnNames.get("draught")))
                 + record.get(columnNames.get("destination"))
                 + record.get(columnNames.get("eta"));
         try {

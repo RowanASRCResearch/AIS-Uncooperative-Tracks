@@ -1,7 +1,7 @@
 package fasade;
 
 import java.sql.*;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * @author: Nick LaPosta
@@ -15,7 +15,7 @@ public abstract class DatabaseFasade {
 
     protected String databaseName;
     protected String tableName;
-    protected HashMap<String, String> columnNames;
+    protected LinkedHashMap<String, String> columnNames;
     protected String user;
     protected String password;
     protected int numberOfColumns;
@@ -83,7 +83,6 @@ public abstract class DatabaseFasade {
         int index = 0;
         for(String s : columnNames.values()) {
             if(!s.equals("ID")) {
-                System.out.println(s);
                 ret[index] = s;
                 index++;
             }
