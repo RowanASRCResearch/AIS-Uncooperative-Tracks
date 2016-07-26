@@ -10,11 +10,11 @@ public abstract class DatabaseFasade {
 
     private final boolean testing = true;
 
-    private Connection connection;
     private String driver;
 
+    protected Connection connection;
     protected String databaseName;
-    protected String tableName;
+    protected String[] tableNames;
     protected LinkedHashMap<String, String> columnNames;
     protected String user;
     protected String password;
@@ -79,7 +79,7 @@ public abstract class DatabaseFasade {
     }
 
     public String[] getColumnNames() {
-        String[] ret = new String[columnNames.size()];
+        String[] ret = new String[columnNames.size()-1];
         int index = 0;
         for(String s : columnNames.values()) {
             if(!s.equals("ID")) {

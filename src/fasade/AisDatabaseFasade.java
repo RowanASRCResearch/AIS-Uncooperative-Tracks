@@ -3,8 +3,10 @@ package fasade;
 import org.apache.commons.csv.CSVRecord;
 import prediction.Point;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -16,42 +18,33 @@ public class AisDatabaseFasade extends DatabaseFasade {
         super();
     }
 
-    // Example Function
-    public ResultSet getSpeeds(String id) {
-        String col = columnNames.get("speed");
-        String query = "SELECT " + columnNames.get("time") + "," + col + " FROM " + tableName + " where " + columnNames.get("id") + "=" + id;
-
-        try {
-            return runQuery(query);
-        } catch(SQLException e) {
-            System.err.println(e.getMessage());
-            return null;
-        }
-    }
-    // End Example Function
-
     public boolean insertCsvEntry(CSVRecord record) {
         //goes through each portion of the record and appends it to the string
-        String query = "INSERT INTO " + tableName
-                + " VALUES ("
-                + record.get(columnNames.get("time"))
-                + record.get(columnNames.get("id"))
-                + Float.parseFloat(record.get(columnNames.get("latitude")))
-                + Float.parseFloat(record.get(columnNames.get("longitude")))
-                + Float.parseFloat(record.get(columnNames.get("course")))
-                + Float.parseFloat(record.get(columnNames.get("speed")))
-                + Integer.parseInt(record.get(columnNames.get("heading")))
-                + record.get(columnNames.get("imo"))
-                + record.get(columnNames.get("name"))
-                + record.get(columnNames.get("callsign"))
-                + record.get(columnNames.get("type"))
-                + Integer.parseInt(record.get(columnNames.get("bowLength")))
-                + Integer.parseInt(record.get(columnNames.get("sternLength")))
-                + Integer.parseInt(record.get(columnNames.get("c")))
-                + Integer.parseInt(record.get(columnNames.get("d")))
-                + Float.parseFloat(record.get(columnNames.get("draught")))
-                + record.get(columnNames.get("destination"))
-                + record.get(columnNames.get("eta"));
+
+        String query = "INSERT INTO " + tableNames[0] + "(";
+        for(String col: getColumnNames())
+            query += col + ",";
+        query = query.substring(0, query.length()-1) + ") VALUES ('"
+                + record.get(columnNames.get("time")) + "', "
+                + record.get(columnNames.get("id")) + ", "
+                + Float.parseFloat(record.get(columnNames.get("latitude"))) + ", "
+                + Float.parseFloat(record.get(columnNames.get("longitude"))) + ", "
+                + Float.parseFloat(record.get(columnNames.get("course"))) + ", "
+                + Float.parseFloat(record.get(columnNames.get("speed"))) + ", "
+                + Integer.parseInt(record.get(columnNames.get("heading"))) + ", '"
+                + record.get(columnNames.get("imo")) + "', '"
+                + record.get(columnNames.get("name")) + "', '"
+                + record.get(columnNames.get("callsign")) + "', "
+                + record.get(columnNames.get("type")) + ", "
+                + Integer.parseInt(record.get(columnNames.get("bowLength"))) + ", "
+                + Integer.parseInt(record.get(columnNames.get("sternLength"))) + ", "
+                + Integer.parseInt(record.get(columnNames.get("c"))) + ", "
+                + Integer.parseInt(record.get(columnNames.get("d"))) + ", "
+                + Float.parseFloat(record.get(columnNames.get("draught"))) + ", '"
+                + record.get(columnNames.get("destination")) + "', '"
+                + record.get(columnNames.get("eta"))
+                + "');";
+        System.out.println(query);
         try {
             return run(query);
         } catch(SQLException e) {
@@ -59,7 +52,7 @@ public class AisDatabaseFasade extends DatabaseFasade {
         }
     }
 
-    public boolean createTable() {
+/*    public boolean createTable() {
         String query = "CREATE TABLE " + tableName + " "
                 + "(ID INTEGER,"
                 + columnNames.get("time") + " VARCHAR(25),"
@@ -89,27 +82,28 @@ public class AisDatabaseFasade extends DatabaseFasade {
         } catch(SQLException e) {
             return false;
         }
-    }
+    }*/
 
     public String[] getLastContact(String id, String date) {
-        String query = "SELECT * FROM " + tableName
-                + " WHERE MMSI=" + id
-                + " AND DATETIME LIKE '%" + date + "%'"
+        String query = "SELECT * FROM " + tableNames[0]
+                + " WHERE " + columnNames.get("id") + "=" + id
+                + " AND " + columnNames.get("time") + " LIKE '%" + date + "%'"
                 + " ORDER BY " + columnNames.get("time")
                 + " DESC LIMIT 1";
         try {
-            ResultSet rs = runQuery(query);
-            rs.last();
+            openConnection();
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
             String[] dateSplit = rs.getString(columnNames.get("time")).split(" ");
             return dateSplit;
         } catch(SQLException e) {
-            System.err.println(e.getMessage() + "\n" + query);
+            System.err.println(e.getMessage());
             return null;
         }
     }
 
     public float[] getLastLocation(String id, String date) {
-        String query = "SELECT * FROM " + tableName
+        String query = "SELECT * FROM " + tableNames[0]
                 + "WHERE (MMSI=" + id
                 + " AND DATETIME LIKE %" + date + "%) "
                 + "ORDER BY " + columnNames.get("time")
@@ -126,7 +120,7 @@ public class AisDatabaseFasade extends DatabaseFasade {
     }
 
     public float getLastSpeed(String id, String date) {
-        String query = "SELECT * FROM " + tableName
+        String query = "SELECT * FROM " + tableNames[0]
                 + "WHERE (MMSI=" + id
                 + " AND DATETIME LIKE %" + date + "%) "
                 + "ORDER BY " + columnNames.get("time")
@@ -143,7 +137,7 @@ public class AisDatabaseFasade extends DatabaseFasade {
     }
 
     public float getLastCourse(String id, String date) {
-        String query = "SELECT * FROM " + tableName
+        String query = "SELECT * FROM " + tableNames[0]
                 + "WHERE (MMSI=" + id
                 + " AND DATETIME LIKE %" + date + "%) "
                 + "ORDER BY " + columnNames.get("time")
