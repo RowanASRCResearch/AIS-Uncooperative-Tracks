@@ -41,21 +41,23 @@ public abstract class DatabaseFasade {
         }
     }
 
-    protected ResultSet runQuery(String query) throws SQLException {
+    /**
+     * USER MUST MANUALLY CLOSE THE CONNECTION WHEN USING THIS FUNCTION
+     *
+     * @param query
+     * @return
+     * @throws SQLException
+     */
+    protected ResultSet getQuery(String query) throws SQLException {
         ResultSet ret = null;
         openConnection();
         Statement statement = connection.createStatement();
-        try {
-            ret = statement.executeQuery(query);
-        } finally {
-            statement.close();
-            closeConnection();
-        }
+        ret = statement.executeQuery(query);
 
         return ret;
     }
 
-    protected boolean run(String query) throws SQLException {
+    protected boolean insertQuery(String query) throws SQLException {
         boolean ret;
         openConnection();
         Statement statement = connection.createStatement();

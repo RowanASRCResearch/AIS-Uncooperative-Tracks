@@ -3,7 +3,6 @@ package fasade;
 import org.apache.commons.csv.CSVRecord;
 import prediction.Point;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,14 +43,14 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + record.get(columnNames.get("destination")) + "', '"
                 + record.get(columnNames.get("eta"))
                 + "');";
-        System.out.println(query);
         try {
-            return run(query);
+            return insertQuery(query);
         } catch(SQLException e) {
             return false;
         }
     }
 
+    // TODO: Table should be created by MySQL schema file, not explicit command.
 /*    public boolean createTable() {
         String query = "CREATE TABLE " + tableName + " "
                 + "(ID INTEGER,"
@@ -94,10 +93,12 @@ public class AisDatabaseFasade extends DatabaseFasade {
             openConnection();
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
+            rs.next();
             String[] dateSplit = rs.getString(columnNames.get("time")).split(" ");
             return dateSplit;
         } catch(SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println(e.getMessage() + "\n" + query);
+            e.printStackTrace();
             return null;
         }
     }
@@ -109,13 +110,15 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + "ORDER BY " + columnNames.get("time")
                 + " DESC LIMIT 1";
         try {
-            ResultSet rs = runQuery(query);
+            ResultSet rs = getQuery(query);
             rs.last();
             float[] latLong = {rs.getFloat(columnNames.get("latitude")), rs.getFloat(columnNames.get("longitude"))};
             return latLong;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return null;
+        }finally {
+            closeConnection();
         }
     }
 
@@ -126,13 +129,15 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + "ORDER BY " + columnNames.get("time")
                 + " DESC LIMIT 1";
         try {
-            ResultSet rs = runQuery(query);
+            ResultSet rs = getQuery(query);
             rs.last();
             float speed = rs.getFloat(columnNames.get("speed"));
             return speed;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return Float.MAX_VALUE;
+        } finally {
+            closeConnection();
         }
     }
 
@@ -143,13 +148,15 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + "ORDER BY " + columnNames.get("time")
                 + " DESC LIMIT 1";
         try {
-            ResultSet rs = runQuery(query);
+            ResultSet rs = getQuery(query);
             rs.last();
             float course = rs.getFloat(columnNames.get("course"));
             return course;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return Float.MAX_VALUE;
+        } finally {
+            closeConnection();
         }
     }
 
@@ -159,20 +166,22 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + ", "
                 + columnNames.get("sternLength")
                 + " "
-                + "FROM aisData WHERE MMSI=" + id;
+                + "FROM " + tableNames[0] + " WHERE MMSI=" + id;
         try {
-            ResultSet rs = runQuery(query);
+            ResultSet rs = getQuery(query);
             return rs.getInt(columnNames.get("bowLength")) +rs.getInt(columnNames.get("sternLength"));
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return -1;
+        } finally {
+            closeConnection();
         }
     }
 
     public boolean insertLocation(int time, float latitude, float longitude) {
         String query = "INSERT INTO PUBLIC.KMLPOINTS VALUES (" + time + "," + latitude + "," + longitude + ")";
         try {
-            return run(query);
+            return insertQuery(query);
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return false;
@@ -184,13 +193,15 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + "ORDER BY "+ columnNames.get("time");
         try {
             ArrayList<Point> pointList = new ArrayList<>();
-            ResultSet rs = runQuery(query);
+            ResultSet rs = getQuery(query);
             while(rs.next())
                 pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), rs.getString("datetime")));
             return pointList;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return null;
+        } finally {
+            closeConnection();
         }
     }
 
@@ -200,13 +211,15 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + " ORDER BY " + columnNames.get("time");
         try {
             ArrayList<Point> pointList = new ArrayList<>();
-            ResultSet rs = runQuery(query);
+            ResultSet rs = getQuery(query);
             while(rs.next())
                 pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), rs.getString("datetime")));
             return pointList;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return null;
+        } finally {
+            closeConnection();
         }
     }
 
@@ -214,13 +227,15 @@ public class AisDatabaseFasade extends DatabaseFasade {
         String query = "SELECT * FROM PUBLIC.PORTS";
         try {
             ArrayList<Point> pointList = new ArrayList<>();
-            ResultSet rs = runQuery(query);
+            ResultSet rs = getQuery(query);
             while(rs.next())
                 pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), rs.getString("datetime")));
             return pointList;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return null;
+        } finally {
+            closeConnection();
         }
     }
 
