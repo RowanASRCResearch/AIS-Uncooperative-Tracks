@@ -11,7 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-class URLConnDemo {
+public class UrlConn {
 
     private static URL base;
     private static URL url;
