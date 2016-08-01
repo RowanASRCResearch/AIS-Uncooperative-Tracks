@@ -33,14 +33,14 @@ class AreaPredictor {
     AreaPredictor(String mmsi, String date, String travelTime, Float maxTurn) {
         this.travelTime = Integer.parseInt((travelTime));
         this.maxTurn = maxTurn;
-        String[] dateSplit = Controller.database.getLastContact(mmsi, date);
+        String[] dateSplit = Controller.database.getLastContact(mmsi);
         lastContactTime = dateSplit[1];
-        initialCoordinates = Controller.database.getLastLocation(mmsi, date);
-        vesselSpeed = Controller.database.getLastSpeed(mmsi, date);
-        vesselCourse = Controller.database.getLastCourse(mmsi, date);
+        initialCoordinates = Controller.database.getLastLocation(mmsi);
+        vesselSpeed = Controller.database.getLastSpeed(mmsi);
+        vesselCourse = Controller.database.getLastCourse(mmsi);
         vesselSize(mmsi);
 
-        Controller.database.insertLocation(0, initialCoordinates[0], initialCoordinates[1]);
+        Controller.database.insertLocation(initialCoordinates[0], initialCoordinates[1]);
     }
 
     /**
@@ -180,18 +180,18 @@ class AreaPredictor {
     public void populateDB() {
         int pointCounter = 1;
         for (Point p : leftCoordinates) {
-            Controller.database.insertLocation(pointCounter, p.getLatitude(), p.getLongitude());
+            Controller.database.insertLocation(p.getLatitude(), p.getLongitude());
             pointCounter++;
         }
 
         for (Point p : forwardCoordinates) {
-            Controller.database.insertLocation(pointCounter, p.getLatitude(), p.getLongitude());
+            Controller.database.insertLocation(p.getLatitude(), p.getLongitude());
             pointCounter++;
         }
 
         for (int i = rightCoordinates.size() - 1; i >= 0; i--) {
             Point p = new Point(rightCoordinates.get(i).getLatitude(), rightCoordinates.get(i).getLongitude());
-            Controller.database.insertLocation(pointCounter, p.getLatitude(), p.getLongitude());
+            Controller.database.insertLocation(p.getLatitude(), p.getLongitude());
             pointCounter++;
         }
     }

@@ -145,7 +145,7 @@ public class Controller {
         algo.execute();
         kmlGen.pull();
         kmlGen.pullPath();
-        kmlGen.pullPorts();
+//        kmlGen.pullPorts();
         kmlGen.generate();
     }
 }

@@ -245,7 +245,7 @@ class KMLGenerator {
         timeStamp = timeStamp.replaceAll(" ", "_").toLowerCase();
         timeStamp = timeStamp.replaceAll(":", "_").toLowerCase();
         timeStamp += ".kml";
-        timeStamp = "output/"+timeStamp;
+        timeStamp = "production" + File.separator + timeStamp;
         return timeStamp;
     }
 
