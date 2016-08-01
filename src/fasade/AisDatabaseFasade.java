@@ -52,66 +52,37 @@ public class AisDatabaseFasade extends DatabaseFasade {
 
     // TODO: Table should be created by MySQL schema file, not explicit command.
 /*    public boolean createTable() {
-        String query = "CREATE TABLE " + tableName + " "
-                + "(ID INTEGER,"
-                + columnNames.get("time") + " VARCHAR(25),"
-                + columnNames.get("id") + " VARCHAR(25),"
-                + columnNames.get("latitude") + " FLOAT,"
-                + columnNames.get("longitude") + " FLOAT,"
-                + columnNames.get("course") + " FLOAT,"
-                + columnNames.get("speed") + " FLOAT,"
-                + columnNames.get("heading") + " INTEGER,"
-                + columnNames.get("imo") + " VARCHAR(25),"
-                + columnNames.get("name") + " VARCHAR(50),"
-                + columnNames.get("callsign") + " VARCHAR(25),"
-                + columnNames.get("type") + " VARCHAR(5),"
-                + columnNames.get("bowLength") + " INTEGER,"
-                + columnNames.get("sternLength") + " INTEGER,"
-                + columnNames.get("c") + " INTEGER,"
-                + columnNames.get("d") + " INTEGER,"
-                + columnNames.get("draft") + " FLOAT,"
-                + columnNames.get("destination") + " VARCHAR(25),"
-                + columnNames.get("eta") + " VARCHAR(25))";
-        String kmlQuery = "CREATE TABLE PUBLIC.KMLPOINTS ("+ columnNames.get("time")+" INT , "+
-                columnNames.get("latitude")+" FLOAT, "+ columnNames.get("longitude")+" FLOAT);";
-        try {
-            run(query);
-            run(kmlQuery);
-            return true;
-        } catch(SQLException e) {
-            return false;
-        }
+        execute .sql file
     }*/
 
-    public String[] getLastContact(String id, String date) {
+    public String[] getLastContact(String id) {
         String query = "SELECT * FROM " + tableNames[0]
                 + " WHERE " + columnNames.get("id") + "=" + id
-                + " AND " + columnNames.get("time") + " LIKE '%" + date + "%'"
                 + " ORDER BY " + columnNames.get("time")
                 + " DESC LIMIT 1";
         try {
             openConnection();
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
-            rs.next();
+            rs.first();
             String[] dateSplit = rs.getString(columnNames.get("time")).split(" ");
             return dateSplit;
         } catch(SQLException e) {
-            System.err.println(e.getMessage() + "\n" + query);
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             return null;
+        } finally {
+            closeConnection();
         }
     }
 
-    public float[] getLastLocation(String id, String date) {
+    public float[] getLastLocation(String id) {
         String query = "SELECT * FROM " + tableNames[0]
-                + "WHERE (MMSI=" + id
-                + " AND DATETIME LIKE %" + date + "%) "
-                + "ORDER BY " + columnNames.get("time")
+                + " WHERE MMSI=" + id
+                + " ORDER BY " + columnNames.get("time")
                 + " DESC LIMIT 1";
         try {
             ResultSet rs = getQuery(query);
-            rs.last();
+            rs.first();
             float[] latLong = {rs.getFloat(columnNames.get("latitude")), rs.getFloat(columnNames.get("longitude"))};
             return latLong;
         } catch(SQLException e) {
@@ -122,15 +93,14 @@ public class AisDatabaseFasade extends DatabaseFasade {
         }
     }
 
-    public float getLastSpeed(String id, String date) {
+    public float getLastSpeed(String id) {
         String query = "SELECT * FROM " + tableNames[0]
-                + "WHERE (MMSI=" + id
-                + " AND DATETIME LIKE %" + date + "%) "
-                + "ORDER BY " + columnNames.get("time")
+                + " WHERE MMSI=" + id
+                + " ORDER BY " + columnNames.get("time")
                 + " DESC LIMIT 1";
         try {
             ResultSet rs = getQuery(query);
-            rs.last();
+            rs.first();
             float speed = rs.getFloat(columnNames.get("speed"));
             return speed;
         } catch(SQLException e) {
@@ -141,15 +111,14 @@ public class AisDatabaseFasade extends DatabaseFasade {
         }
     }
 
-    public float getLastCourse(String id, String date) {
+    public float getLastCourse(String id) {
         String query = "SELECT * FROM " + tableNames[0]
-                + "WHERE (MMSI=" + id
-                + " AND DATETIME LIKE %" + date + "%) "
-                + "ORDER BY " + columnNames.get("time")
+                + " WHERE MMSI=" + id
+                + " ORDER BY " + columnNames.get("time")
                 + " DESC LIMIT 1";
         try {
             ResultSet rs = getQuery(query);
-            rs.last();
+            rs.first();
             float course = rs.getFloat(columnNames.get("course"));
             return course;
         } catch(SQLException e) {
@@ -169,7 +138,8 @@ public class AisDatabaseFasade extends DatabaseFasade {
                 + "FROM " + tableNames[0] + " WHERE MMSI=" + id;
         try {
             ResultSet rs = getQuery(query);
-            return rs.getInt(columnNames.get("bowLength")) +rs.getInt(columnNames.get("sternLength"));
+            rs.first();
+            return rs.getInt(columnNames.get("bowLength")) + rs.getInt(columnNames.get("sternLength"));
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return -1;
@@ -178,8 +148,8 @@ public class AisDatabaseFasade extends DatabaseFasade {
         }
     }
 
-    public boolean insertLocation(int time, float latitude, float longitude) {
-        String query = "INSERT INTO PUBLIC.KMLPOINTS VALUES (" + time + "," + latitude + "," + longitude + ")";
+    public boolean insertLocation(float latitude, float longitude) {
+        String query = "INSERT INTO " + tableNames[1] + "(LATITUDE, LONGITUDE) VALUES (" + latitude + "," + longitude + ")";
         try {
             return insertQuery(query);
         } catch(SQLException e) {
@@ -189,13 +159,13 @@ public class AisDatabaseFasade extends DatabaseFasade {
     }
 
     public ArrayList<Point> getKML() {
-        String query = "SELECT * FROM PUBLIC.KMLPOINTS "
-                + "ORDER BY "+ columnNames.get("time");
+        String query = "SELECT * FROM " + tableNames[1]
+                + " ORDER BY ID";
         try {
             ArrayList<Point> pointList = new ArrayList<>();
             ResultSet rs = getQuery(query);
             while(rs.next())
-                pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), rs.getString("datetime")));
+                pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), "ID"));
             return pointList;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
@@ -206,14 +176,14 @@ public class AisDatabaseFasade extends DatabaseFasade {
     }
 
     public ArrayList<Point> getKMLPath(String id) {
-        String query = "SELECT * FROM PUBLIC.AISDATA "
-                + "WHERE MMSI=" + id
-                + " ORDER BY " + columnNames.get("time");
+        String query = "SELECT * FROM " + tableNames[0]
+                + " WHERE MMSI=" + id
+                + " ORDER BY ID";
         try {
             ArrayList<Point> pointList = new ArrayList<>();
             ResultSet rs = getQuery(query);
             while(rs.next())
-                pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), rs.getString("datetime")));
+                pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), "ID"));
             return pointList;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
