@@ -1,5 +1,6 @@
 package gathering;
 
+import com.sun.org.apache.bcel.internal.generic.FLOAD;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.io.BufferedReader;
@@ -8,6 +9,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Research on 8/1/2016.
@@ -17,54 +21,28 @@ public class ApiFascade {
     String station = "";
     String from = "";
     String to = "";
-    String datum = "";
+    String datum = "MSL";
     String baseUrl = "http://tidesandcurrents.noaa.gov/api/datagetter?";
     String endUrl = "&units=metric&time_zone=gmt&format=json";
 
     String[] options = {"wind"};
 
-    public ApiFascade(String[] args) {
+    public ApiFascade(String station, String to, String from) {
 
-        Boolean print = false;
-        switch (args.length) {
-            case 4:
-                //Statements
-                station = args[0];
-                from = args[1];
-                to = args[2];
-                datum = args[3];
-                print = true;
-                break; //optional
-            case 3:
-                //Statements
-                station = args[0];
-                from = args[1];
-                datum = args[2];
-                print = true;
-                break; //optional
-            //You can have any number of case statements.
-            default: //Optional
-                //Statements
-                System.out.print("Please Enter 3 or 4 arguments!");
-        }
-
-        if (print) {
-            System.out.println("0: " + station);
-            System.out.println("1: " + from);
-            System.out.println("2: " + to);
-            System.out.println("4: " + datum);
-
-        }
-
+        this.station = station;
+        this.to = to;
+        this.from = from;
 
     }
 
     public static void main(String args[]) throws IOException {
 
-        ApiFascade fascade = new ApiFascade(args);
+        ApiFascade fascade = new ApiFascade("8454000", "20130808%2015:00", "20130808%2015:00");
         String text = fascade.urlBuilder();
         System.out.print(text);
-        System.out.print(fascade.scanPage(text));
+        String scan = fascade.scanPage(text);
+        System.out.println(scan);
+        System.out.print(Arrays.asList(fascade.formatData(scan)));
     }
 
     String urlBuilder() {
@@ -100,71 +78,74 @@ public class ApiFascade {
     }
 
 
-    public class data {
-        String t = "";
-        String s = "";
-        String d = "";
-        String dr = "";
-        String g = "";
-        String f = "";
+    public Object[] formatData(String str) {
 
-        public data(String t, String s, String d, String dr, String g, String f) {
-            this.t = t;
-            this.s = s;
-            this.d = d;
+        Object[] data = new Object[3];
+        int id = 0;
+        Point station = new Point(0, 0);
+        float s = 0;
+        float d = 0;
 
-            this.dr = dr;
-            this.g = g;
-            this.f = f;
+        String[] list = str.split(",");
+        for (int i = 0; i < list.length; i++) {
+
+            if (list[i].contains("\"lat\":")) {
+                list[i] = rmString(list[i], "\"");
+                list[i] = rmString(list[i], "lat:");
+                System.out.println(list[i]);
+                list[i] = rmString(list[i], "}");
+                station.latitude = Float.parseFloat(list[i]);
+            }
+
+            if (list[i].contains("\"lon\":")) {
+                list[i] = rmString(list[i], "\"}");
+                list[i] = rmString(list[i], "\"");
+                list[i] = rmString(list[i], "lon:");
+                System.out.println(list[i]);
+                station.longitude = Float.parseFloat(list[i]);
+
+            }
+
+            if (list[i].contains("\"s\":")) {
+                list[i] = rmString(list[i], "\"");
+                list[i] = rmString(list[i], "s:");
+                System.out.println(list[i]);
+                list[i] = rmString(list[i], "}");
+                s = Float.parseFloat(list[i]);
+            }
+
+            if (list[i].contains("\"d\":")) {
+                list[i] = rmString(list[i], "\"");
+                list[i] = rmString(list[i], "d:");
+                System.out.println(list[i]);
+                list[i] = rmString(list[i], "}");
+                d = Float.parseFloat(list[i]);
+            }
+
         }
 
-        public String getT() {
-            return t;
-        }
+        data[0] = station;
+        data[1] = s;
+        data[2] = d;
 
-        public void setT(String t) {
-            this.t = t;
-        }
 
-        public String getS() {
-            return s;
-        }
+        return data;
 
-        public void setS(String s) {
-            this.s = s;
-        }
 
-        public String getD() {
-            return d;
-        }
 
-        public void setD(String d) {
-            this.d = d;
-        }
 
-        public String getDr() {
-            return dr;
-        }
+    }
 
-        public void setDr(String dr) {
-            this.dr = dr;
-        }
-
-        public String getG() {
-            return g;
-        }
-
-        public void setG(String g) {
-            this.g = g;
-        }
-
-        public String getF() {
-            return f;
-        }
-
-        public void setF(String f) {
-            this.f = f;
-        }
+    /**
+     * This method takes in a string and removes the substring specified
+     *
+     * @param ogString
+     * @param subString
+     * @return
+     */
+    private String rmString(String ogString, String subString) {
+        ogString = ogString.replace(subString, "");
+        return ogString;
     }
 
 }
