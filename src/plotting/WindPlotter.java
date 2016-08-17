@@ -58,13 +58,13 @@ public class WindPlotter {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.plotVector(vectorExample);
-        window.plotVector(new WindVector(new Point(1, 2), 1.2f, .86f));
+        window.plotVector(new WindVector(new Point(77.6f, -85.4f), 1.2f, 0.86f));
     }
 
     private static HashMap<Integer,ArrayList<Object>> placeholderFunction(Point p, float radius) {
         HashMap map = new HashMap<>();
         ArrayList list = new ArrayList<>();
-        list.add(new Point((float) 77.919191, (float)-84.969696));
+        list.add(new Point((float) 77.919191, (float)-84.869696));
         list.add(new Double(4.33));
         list.add(new Integer(262));
         map.put(74, list);
