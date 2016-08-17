@@ -89,4 +89,8 @@ public class Point {
     public String getCoordinate() {
         return ("" + longitude + latitude);
     }
+
+    public String toString() {
+        return Float.toString(latitude) + "," + Float.toString(longitude);
+    }
 }
