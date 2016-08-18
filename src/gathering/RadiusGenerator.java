@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import fasade.AisDatabaseFasade;
 import prediction.Point;
 
 /**
@@ -54,7 +55,11 @@ public class RadiusGenerator {
         // System.out.println(p.getLatitude());
         // System.out.println(p.getLongitude());
 
-        g.scanStations("stations.csv");
+        g.insertStations("stations.csv");
+    }
+
+    Point[] getCircle() {
+        return points;
     }
 
     /**
@@ -63,7 +68,7 @@ public class RadiusGenerator {
      * @param distance
      * @return p
      */
-    Point genPoint(float angle, float distance) {
+    private Point genPoint(float angle, float distance) {
         Point p = new Point(0, 0);
         float height, width;
 
@@ -78,15 +83,6 @@ public class RadiusGenerator {
 
         p.setLatitude(original.getLatitude() + width);
         p.setLongitude(original.getLongitude() + height);
-
-/*
-        System.out.println(" <Placemark>\n" +
-                "    <name>" + angle + "</name>\n" +
-                "    <description></description>\n" +
-                "    <Point>\n" +
-                "      <coordinates>" + p.getLongitude() + "," + p.getLatitude() + "</coordinates>\n" +
-                "    </Point>\n" +
-                "  </Placemark> ");*/
         return p;
     }
 
@@ -127,8 +123,8 @@ public class RadiusGenerator {
      * @return stations
      * @throws IOException
      */
-    private ArrayList<station> scanStations(String fileName) throws IOException {
-        ArrayList<station> stations = new ArrayList<>();
+    private void insertStations(String fileName) throws IOException {
+        AisDatabaseFasade fascade = new AisDatabaseFasade();
         // Open the file
         FileInputStream fstream = new FileInputStream(fileName);
         BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
@@ -140,7 +136,7 @@ public class RadiusGenerator {
         while ((strLine = br.readLine()) != null) {
             // Print the content on the console
             String[] holder = strLine.split(",");
-            stations.add(new station(holder[0], holder[1], holder[2]));
+            fascade.insertStations(Integer.parseInt(holder[0]), Float.parseFloat(holder[1]), Float.parseFloat(holder[2]));
             System.out.println(strLine);
         }
 
@@ -148,58 +144,10 @@ public class RadiusGenerator {
         br.close();
 
 
-        return stations;
     }
 
 
-    /**
-     * check database and return stations inside the radius
-     * @return
-     */
-    ArrayList<String> getStations() {
-        ArrayList<String> stations = new ArrayList<>();
-        //in here we can check database for stations inside area
-        return stations;
-    }
 
-    /**
-     * station objects used to hold station information
-     */
-    private class station {
-        String id;
-        String lat;
-        String lon;
-
-        public station(String id, String lat, String lon) {
-            this.id = id;
-            this.lat = lat;
-            this.lon = lon;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getLat() {
-            return lat;
-        }
-
-        public void setLat(String lat) {
-            this.lat = lat;
-        }
-
-        public String getLon() {
-            return lon;
-        }
-
-        public void setLon(String lon) {
-            this.lon = lon;
-        }
-    }
 }
 
 
