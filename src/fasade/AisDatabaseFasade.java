@@ -168,7 +168,8 @@ public class AisDatabaseFasade extends DatabaseFasade {
     public Boolean insertStations(int id, float latitude, float longitude) {
 
 
-        String query = "INSERT INTO " + tableNames[2] + "(ID, LATITUDE, LONGITUDE) VALUES (" + latitude + "," + longitude + ")";
+        String query = "INSERT INTO " + tableNames[2]
+                + "(ID, LATITUDE, LONGITUDE) VALUES (" + id + "," + latitude + "," + longitude + ")";
         try {
             return insertQuery(query);
         } catch (SQLException e) {

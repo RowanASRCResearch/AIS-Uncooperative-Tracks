@@ -1,10 +1,12 @@
 package plotting;
 
 import prediction.Point;
-import gathering.Gathering;
+import gathering.Gatherer;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -15,30 +17,31 @@ import java.util.Set;
 public class WindPlotter {
 
     private static Point center;
-    private static float radius;
+    private static int radius;
     private static PlottingWindow window;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         center = new Point(Float.parseFloat(args[0]), Float.parseFloat(args[1]));
-        radius = Float.parseFloat(args[2]);
+        radius = Integer.parseInt(args[2]);
 
         Gatherer gatherer = new Gatherer(center, radius);
-        HashMap windData = gatherer.getStations();
+        HashMap<Integer,ArrayList<Object>> windData = gatherer.getStations();
         //HashMap windData = placeholderFunction(center, radius);
+
+        ArrayList<WindVector> vectors = new ArrayList<>();
 
         Set<Integer> buoyIDs = windData.keySet();
         WindVector vectorExample = null;
         for(Integer id : buoyIDs) {
             ArrayList<Object> buoyData = (ArrayList) windData.get(id);
-            vectorExample = convertVector(  (Point) buoyData.get(0),
+            vectors.add(convertVector(  (Point) buoyData.get(0),
                             (float) buoyData.get(1),
-                            (int) buoyData.get(2));
+                            (float) buoyData.get(2)));
         }
 
         createFrame();
-        addVector(vectorExample);
-        addVector(new WindVector(new Point(77.6f, -85.4f), 1.2f, 0.86f));
+        addVectors(vectors);
 
     }
 
@@ -54,6 +57,8 @@ public class WindPlotter {
     private static void addVector(WindVector vector) {
         window.plotVector(vector);
     }
+
+    private static void addVectors(Collection<WindVector> collection) {window.plotVectors(collection);}
 
     private static WindVector convertVector(Point location, float windSpeed, float windAngle) {
         int count = 0;

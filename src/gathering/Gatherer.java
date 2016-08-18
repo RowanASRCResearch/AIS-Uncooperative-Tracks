@@ -1,9 +1,13 @@
 package gathering;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import com.sun.xml.internal.ws.util.InjectionPlan;
 import fasade.AisDatabaseFasade;
 import prediction.Point;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +17,7 @@ import java.util.Map;
  * Created by eliakah on 8/18/16.
  */
 public class Gatherer {
-    Map<Integer, Object> stations;
+    HashMap<Integer, ArrayList<Object>> stations;
     Point point;
     int radius;
     Point[] circle;
@@ -28,9 +32,17 @@ public class Gatherer {
         RadiusGenerator g = new RadiusGenerator(point.getLatitude(), point.getLongitude(), 30, radius);
         this.circle = g.getCircle();
         AisDatabaseFasade fascade = new AisDatabaseFasade();
+        JsonReader jr;
+        try {
+            jr = new JsonReader(new FileReader(new File("src/fasade/JSONTEST.json")));
+            fascade = new Gson().fromJson(jr, AisDatabaseFasade.class);
+            jr.close();
+        } catch (IOException e) {
+            System.out.println("File Not Found!");
+        }
         ArrayList<Station> tempList = fascade.getStations();
         for (int i = 0; i < tempList.size(); i++) {
-            if (g.contains(circle, new Point(stList.get(i).getLat(), stList.get(i).getLat()))) {
+            if (g.contains(circle, new Point(tempList.get(i).getLat(), tempList.get(i).getLat()))) {
                 stList.add(tempList.get(i));
             }
         }
@@ -47,7 +59,7 @@ public class Gatherer {
     }
 
 
-    Map<Integer, Object> getStations() {
+    public HashMap<Integer, ArrayList<Object>> getStations() {
 
 
         return stations;

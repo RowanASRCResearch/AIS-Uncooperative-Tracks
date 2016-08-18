@@ -5,6 +5,7 @@ import prediction.Point;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public class PlottingWindow extends JPanel {
         repaint();
     }
 
-    public void plotVectors(ArrayList<WindVector> vectors) {
+    public void plotVectors(Collection<WindVector> vectors) {
         vectorQueue.addAll(vectors);
         repaint();
     }
@@ -59,8 +60,8 @@ public class PlottingWindow extends JPanel {
         BasicStroke bs = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, dash, 2f);
         int[] pixelLocation = pointToPixel(v.getLocation());
         g2d.setColor(Color.BLACK);
-        g2d.drawLine(pixelLocation[0], pixelLocation[1], pixelLocation[0], pixelLocation[1] + (int) (v.getLongComponent() * 20));
-        g2d.drawLine(pixelLocation[0], pixelLocation[1], pixelLocation[0] + (int) (v.getLatComponent() * 20), pixelLocation[1]);
+        g2d.drawLine(pixelLocation[0], pixelLocation[1], pixelLocation[0], pixelLocation[1] + (int) (v.getLongComponent() * 10));
+        g2d.drawLine(pixelLocation[0], pixelLocation[1], pixelLocation[0] + (int) (v.getLatComponent() * 10), pixelLocation[1]);
         g2d.setColor(Color.RED);
         g2d.fillOval(pixelLocation[0] - 2, pixelLocation[1] - 2, 4, 4);
     }

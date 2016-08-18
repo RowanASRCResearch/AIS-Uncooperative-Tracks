@@ -1,13 +1,12 @@
 package gathering;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import fasade.AisDatabaseFasade;
 import prediction.Point;
 
@@ -47,14 +46,7 @@ public class RadiusGenerator {
     }
 
     public static void main(String[] args) throws IOException {
-        // write your code here
         RadiusGenerator g = new RadiusGenerator(0, 0, 30, 5.66f);
-        System.out.println(Arrays.toString(g.points));
-        System.out.println(g.contains(g.points, new Point(0, 0)));
-        //Point p = g.genPoint(360, 5.66f);
-        // System.out.println(p.getLatitude());
-        // System.out.println(p.getLongitude());
-
         g.insertStations("stations.csv");
     }
 
@@ -125,6 +117,14 @@ public class RadiusGenerator {
      */
     private void insertStations(String fileName) throws IOException {
         AisDatabaseFasade fascade = new AisDatabaseFasade();
+        JsonReader jr;
+        try {
+            jr = new JsonReader(new FileReader(new File("src/fasade/JSONTEST.json")));
+            fascade = new Gson().fromJson(jr, AisDatabaseFasade.class);
+            jr.close();
+        } catch (IOException e) {
+            System.out.println("File Not Found!");
+        }
         // Open the file
         FileInputStream fstream = new FileInputStream(fileName);
         BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
@@ -136,7 +136,7 @@ public class RadiusGenerator {
         while ((strLine = br.readLine()) != null) {
             // Print the content on the console
             String[] holder = strLine.split(",");
-            fascade.insertStations(Integer.parseInt(holder[0]), Float.parseFloat(holder[1]), Float.parseFloat(holder[2]));
+            fascade.insertStations(Integer.parseInt(holder[0].trim()), Float.parseFloat(holder[1].trim()), Float.parseFloat(holder[2].trim()));
             System.out.println(strLine);
         }
 
