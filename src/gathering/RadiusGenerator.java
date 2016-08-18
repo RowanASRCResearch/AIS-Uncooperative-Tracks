@@ -8,22 +8,33 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static jdk.nashorn.internal.objects.NativeMath.round;
+import prediction.Point;
 
 /**
- * Created by Research on 8/10/2016.
+ * Created by Eliakah Kakou
+ * This class takes coordinates and a distance as input and
+ * returns a list of points making up a circle of the specified radius
  */
-public class Gen {
+public class RadiusGenerator {
 
-    public Point[] points;
-    float rad = 0;
-    Point original;
-    ArrayList<Point> radius = new ArrayList<>();
-    private float[] angles;
+    public Point[] points; //list of points
+    float rad = 0; //circle radius
+    Point original; //center point
+    int pointNum = 0;
+    private float[] angles; //list of angles of each points in respective order
 
-    public Gen(float lat, float lng, int pointNum, float rad) {
+    /**
+     * Constructor
+     *
+     * @param lat
+     * @param lng
+     * @param pointNum
+     * @param rad
+     */
+    public RadiusGenerator(float lat, float lng, int pointNum, float rad) {
         original = new Point(lat, lng);
         this.rad = rad;
+        this.pointNum = pointNum;
         angles = new float[pointNum];
         points = new Point[pointNum];
         getCirclePoints();
@@ -36,23 +47,28 @@ public class Gen {
 
     public static void main(String[] args) throws IOException {
         // write your code here
-        Gen g = new Gen(0, 0, 30, 5.66f);
+        RadiusGenerator g = new RadiusGenerator(0, 0, 30, 5.66f);
         System.out.println(Arrays.toString(g.points));
         System.out.println(g.contains(g.points, new Point(0, 0)));
         //Point p = g.genPoint(360, 5.66f);
-        // System.out.println(p.latitude);
-        // System.out.println(p.longitude);
+        // System.out.println(p.getLatitude());
+        // System.out.println(p.getLongitude());
 
-        g.scanStations("stations.txt");
+        g.scanStations("stations.csv");
     }
 
+    /**
+     * generates coordiantes of a point given angle and distance
+     * @param angle
+     * @param distance
+     * @return p
+     */
     Point genPoint(float angle, float distance) {
         Point p = new Point(0, 0);
-        int quadrant = 1;
         float height, width;
 
 
-        System.out.println(quadrant);
+
         //get height
         height = (float) (Math.sin(Math.toRadians(angle)) * distance);
 
@@ -60,23 +76,26 @@ public class Gen {
         width = (float) (Math.cos(Math.toRadians(angle)) * distance);
 
 
-        p.latitude = (original.latitude + width);
-        p.longitude = (original.longitude + height);
+        p.setLatitude(original.getLatitude() + width);
+        p.setLongitude(original.getLongitude() + height);
 
-
+/*
         System.out.println(" <Placemark>\n" +
                 "    <name>" + angle + "</name>\n" +
                 "    <description></description>\n" +
                 "    <Point>\n" +
-                "      <coordinates>" + p.longitude + "," + p.latitude + "</coordinates>\n" +
+                "      <coordinates>" + p.getLongitude() + "," + p.getLatitude() + "</coordinates>\n" +
                 "    </Point>\n" +
-                "  </Placemark> ");
+                "  </Placemark> ");*/
         return p;
     }
 
 
+    /**
+     * generates all of the angles of the points in the circle
+     */
     private void getCirclePoints() {
-        float increment = 360 / 30;
+        float increment = 360 / pointNum;
         float angle = 0;
         for (int i = 0; i < 30; i++) {
 
@@ -86,16 +105,28 @@ public class Gen {
 
     }
 
+    /**
+     * checks if a point is contained in an area
+     * @param polygon
+     * @param p
+     * @return
+     */
     Boolean contains(Point[] polygon, Point p) {
         Polygon poly = new Polygon();
         for (int i = 0; i < polygon.length; i++) {
-            poly.addPoint((int) polygon[i].latitude, (int) polygon[i].longitude);
+            poly.addPoint((int) polygon[i].getLatitude(), (int) polygon[i].getLongitude());
         }
 
-        return poly.contains(p.latitude, p.longitude);
+        return poly.contains(p.getLatitude(), p.getLongitude());
 
     }
 
+    /**
+     * scanns file line by line and returns a list of stations object
+     * @param fileName
+     * @return stations
+     * @throws IOException
+     */
     private ArrayList<station> scanStations(String fileName) throws IOException {
         ArrayList<station> stations = new ArrayList<>();
         // Open the file
@@ -121,13 +152,19 @@ public class Gen {
     }
 
 
+    /**
+     * check database and return stations inside the radius
+     * @return
+     */
     ArrayList<String> getStations() {
         ArrayList<String> stations = new ArrayList<>();
         //in here we can check database for stations inside area
         return stations;
     }
 
-
+    /**
+     * station objects used to hold station information
+     */
     private class station {
         String id;
         String lat;
