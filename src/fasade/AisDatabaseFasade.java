@@ -1,8 +1,14 @@
 package fasade;
 
+import gathering.RadiusGenerator;
+import gathering.Station;
 import org.apache.commons.csv.CSVRecord;
 import prediction.Point;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -158,15 +164,45 @@ public class AisDatabaseFasade extends DatabaseFasade {
         }
     }
 
+
+    public Boolean insertStations(int id, float latitude, float longitude) {
+
+
+        String query = "INSERT INTO " + tableNames[2] + "(ID, LATITUDE, LONGITUDE) VALUES (" + latitude + "," + longitude + ")";
+        try {
+            return insertQuery(query);
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+    }
+
     public ArrayList<Point> getKML() {
         String query = "SELECT * FROM " + tableNames[1]
                 + " ORDER BY ID";
         try {
             ArrayList<Point> pointList = new ArrayList<>();
             ResultSet rs = getQuery(query);
-            while(rs.next())
-                pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), "ID"));
+            while (rs.next())
+                pointList.add(new Point(rs.getFloat("latitude"), rs.getFloat("longitude"), "ID"));
             return pointList;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return null;
+        } finally {
+            closeConnection();
+        }
+    }
+
+    public ArrayList<Station> getStations() {
+        String query = "SELECT * FROM " + tableNames[2]
+                + " ORDER BY ID";
+        try {
+            ArrayList<Station> stations = new ArrayList<>();
+            ResultSet rs = getQuery(query);
+            while(rs.next())
+                stations.add(new Station(rs.getInt("id"), rs.getFloat("latitude"), rs.getFloat("longitude")));
+            return stations;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
             return null;

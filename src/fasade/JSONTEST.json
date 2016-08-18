@@ -3,7 +3,8 @@
   "databaseName":"AIS_DATA",
   "tableNames":[
     "Vessel_Data",
-    "KML_Data"
+    "KML_Data",
+    "stations"
   ],
   "columnNames":
   {
