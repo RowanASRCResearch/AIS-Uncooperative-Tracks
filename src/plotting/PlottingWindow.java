@@ -37,6 +37,11 @@ public class PlottingWindow extends JPanel {
         repaint();
     }
 
+    public void plotVectors(ArrayList<WindVector> vectors) {
+        vectorQueue.addAll(vectors);
+        repaint();
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
