@@ -1,6 +1,7 @@
 package plotting;
 
 import prediction.Point;
+import gathering.Gathering;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -22,7 +23,10 @@ public class WindPlotter {
         center = new Point(Float.parseFloat(args[0]), Float.parseFloat(args[1]));
         radius = Float.parseFloat(args[2]);
 
-        HashMap windData = placeholderFunction(center, radius);
+        Gatherer gatherer = new Gatherer(center, radius);
+        HashMap windData = gatherer.getStations();
+        //HashMap windData = placeholderFunction(center, radius);
+
         Set<Integer> buoyIDs = windData.keySet();
         WindVector vectorExample = null;
         for(Integer id : buoyIDs) {
@@ -76,7 +80,7 @@ public class WindPlotter {
         return new WindVector(location, y, x);
     }
 
-    private static HashMap<Integer,ArrayList<Object>> placeholderFunction(Point p, float radius) {
+    /*private static HashMap<Integer,ArrayList<Object>> placeholderFunction(Point p, float radius) {
         HashMap map = new HashMap<>();
         ArrayList list = new ArrayList<>();
         list.add(new Point((float) 77.919191, (float)-84.869696));
@@ -84,6 +88,6 @@ public class WindPlotter {
         list.add(new Integer(262));
         map.put(74, list);
         return map;
-    }
+    }*/
 
 }
