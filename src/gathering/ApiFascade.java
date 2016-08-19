@@ -109,7 +109,6 @@ public class ApiFascade {
             if (list[i].contains("\"lat\":")) {
                 list[i] = rmString(list[i], "\"");
                 list[i] = rmString(list[i], "lat:");
-                System.out.println(list[i]);
                 list[i] = rmString(list[i], "}");
                 station.setLatitude(Float.parseFloat(list[i]));
             }
@@ -118,7 +117,6 @@ public class ApiFascade {
                 list[i] = rmString(list[i], "\"}");
                 list[i] = rmString(list[i], "\"");
                 list[i] = rmString(list[i], "lon:");
-                System.out.println(list[i]);
                 station.setLongitude(Float.parseFloat(list[i]));
 
             }
@@ -126,7 +124,6 @@ public class ApiFascade {
             if (list[i].contains("\"s\":")) {
                 list[i] = rmString(list[i], "\"");
                 list[i] = rmString(list[i], "s:");
-                System.out.println(list[i]);
                 list[i] = rmString(list[i], "}");
                 s = Float.parseFloat(list[i]);
             }
@@ -134,7 +131,6 @@ public class ApiFascade {
             if (list[i].contains("\"d\":")) {
                 list[i] = rmString(list[i], "\"");
                 list[i] = rmString(list[i], "d:");
-                System.out.println(list[i]);
                 list[i] = rmString(list[i], "}");
                 d = Float.parseFloat(list[i]);
             }

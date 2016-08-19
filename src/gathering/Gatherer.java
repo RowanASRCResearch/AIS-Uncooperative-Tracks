@@ -40,7 +40,13 @@ public class Gatherer {
         } catch (IOException e) {
             System.out.println("File Not Found!");
         }
-        ArrayList<Station> tempList = fascade.getStations();
+        float latDiff = radius / 110.574f;
+        float lonDiff = radius / (float) (111.320 * Math.cos(point.getLatitude() * Math.PI / 180));
+        float north = point.getLatitude() + latDiff;
+        float south = point.getLatitude() - latDiff;
+        float east  = point.getLongitude() + lonDiff;
+        float west  = point.getLongitude() - lonDiff;
+        ArrayList<Station> tempList = fascade.getStations(north, south, east, west);
         for (int i = 0; i < tempList.size(); i++) {
             if (g.contains(circle, new Point(tempList.get(i).getLat(), tempList.get(i).getLat()))) {
                 stList.add(tempList.get(i));

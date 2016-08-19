@@ -195,8 +195,10 @@ public class AisDatabaseFasade extends DatabaseFasade {
         }
     }
 
-    public ArrayList<Station> getStations() {
+    public ArrayList<Station> getStations(float north, float south, float east, float west) {
         String query = "SELECT * FROM " + tableNames[2]
+                + " WHERE LATITUDE < " + north + " AND LATITUDE > " + south + " AND"
+                + " LONGITUDE < " + east + " AND LONGITUDE > " + west
                 + " ORDER BY ID";
         try {
             ArrayList<Station> stations = new ArrayList<>();

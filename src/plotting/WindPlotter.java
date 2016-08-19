@@ -27,12 +27,10 @@ public class WindPlotter {
 
         Gatherer gatherer = new Gatherer(center, radius);
         HashMap<Integer,ArrayList<Object>> windData = gatherer.getStations();
-        //HashMap windData = placeholderFunction(center, radius);
 
         ArrayList<WindVector> vectors = new ArrayList<>();
 
         Set<Integer> buoyIDs = windData.keySet();
-        WindVector vectorExample = null;
         for(Integer id : buoyIDs) {
             ArrayList<Object> buoyData = (ArrayList) windData.get(id);
             vectors.add(convertVector(  (Point) buoyData.get(0),

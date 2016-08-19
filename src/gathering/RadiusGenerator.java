@@ -41,7 +41,6 @@ public class RadiusGenerator {
         for (int i = 0; i < angles.length; i++) {
             points[i] = genPoint(angles[i], rad);
         }
-        System.out.println(Arrays.toString(angles));
 
     }
 
@@ -136,8 +135,7 @@ public class RadiusGenerator {
         while ((strLine = br.readLine()) != null) {
             // Print the content on the console
             String[] holder = strLine.split(",");
-            fascade.insertStations(Integer.parseInt(holder[0].trim()), Float.parseFloat(holder[1].trim()), Float.parseFloat(holder[2].trim()));
-            System.out.println(strLine);
+            fascade.insertStations(Integer.parseInt(holder[0].trim()), Float.parseFloat(holder[2].trim()), Float.parseFloat(holder[1].trim()));
         }
 
         //Close the input stream
