@@ -26,7 +26,7 @@ public class Gatherer {
 
     public Gatherer(Point point, int radius) throws IOException {
         this.point = point;
-        this.radius = radius;
+        this.radius = (int) (radius * 0.95);
         stList = new ArrayList<>();
         stations = new HashMap();
         RadiusGenerator g = new RadiusGenerator(point.getLatitude(), point.getLongitude(), 30, radius);
