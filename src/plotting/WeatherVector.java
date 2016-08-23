@@ -5,11 +5,11 @@ import prediction.Point;
 /**
  * Created by Research on 8/23/2016.
  */
-public class WeatherVector {
+public abstract class WeatherVector {
 
-    private float latComponent;
-    private float longComponent;
-    private Point location;
+    protected float latComponent;
+    protected float longComponent;
+    protected Point location;
 
     public WeatherVector(Point location, float latComponent, float longComponent) {
         this.location = location;
