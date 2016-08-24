@@ -14,11 +14,8 @@ import prediction.Point;
 public class Node {
     public Point[] points;//list of points making up the parameter
     public PriorityBuoyList buoyList;
-    public ArrayList<Node> neighbors = new ArrayList<>();//nodes that can be used as children
+    public ArrayList<Node> neighbors = new ArrayList<>();//neighboring nodes
 
-    public ArrayList<Integer> x = new ArrayList<>();//nodes that can be used as children
-
-    public ArrayList<Integer> y = new ArrayList<>();//nodes that can be used as children
 
     public boolean used = false;
 
