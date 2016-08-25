@@ -19,7 +19,7 @@ public class PlottingWindow extends JPanel {
     private float west;
     private float north;
     private float south;
-    private List<WindVector> vectorQueue;
+    private List<WeatherVector> vectorQueue;
 
     public PlottingWindow(Point center, float radius) {
         this.center = center;
@@ -33,12 +33,12 @@ public class PlottingWindow extends JPanel {
         vectorQueue = new ArrayList<>();
     }
 
-    public void plotVector(WindVector v) {
+    public void plotVector(WeatherVector v) {
         vectorQueue.add(v);
         repaint();
     }
 
-    public void plotVectors(Collection<WindVector> vectors) {
+    public void plotVectors(Collection<WeatherVector> vectors) {
         vectorQueue.addAll(vectors);
         repaint();
     }
@@ -48,12 +48,12 @@ public class PlottingWindow extends JPanel {
         super.paintComponent(g);
         g.fillOval((this.getWidth() / 2) - 2, (this.getHeight() / 2) - 2, 4, 4);
         g.drawOval(0, 0, this.getWidth(), this.getHeight());
-        for(WindVector v : vectorQueue) {
+        for(WeatherVector v : vectorQueue) {
             drawVector(v, g);
         }
     }
 
-    private void drawVector(WindVector v, Graphics g) {
+    private void drawVector(WeatherVector v, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
         float[] dash = {2f, 0f, 2f};

@@ -28,7 +28,7 @@ public class WindPlotter {
         Gatherer gatherer = new Gatherer(center, radius);
         HashMap<Integer,ArrayList<Object>> windData = gatherer.getStations();
 
-        ArrayList<WindVector> vectors = new ArrayList<>();
+        ArrayList<WeatherVector> vectors = new ArrayList<>();
 
         Set<Integer> buoyIDs = windData.keySet();
         for(Integer id : buoyIDs) {
@@ -52,13 +52,13 @@ public class WindPlotter {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private static void addVector(WindVector vector) {
+    private static void addVector(WeatherVector vector) {
         window.plotVector(vector);
     }
 
-    private static void addVectors(Collection<WindVector> collection) {window.plotVectors(collection);}
+    private static void addVectors(Collection<WeatherVector> collection) {window.plotVectors(collection);}
 
-    private static WindVector convertVector(Point location, float windSpeed, float windAngle) {
+    private static WeatherVector convertVector(Point location, float windSpeed, float windAngle) {
         int count = 0;
         while(windAngle > 90) {
             windAngle -= 90;
@@ -80,7 +80,7 @@ public class WindPlotter {
         if(count % 3 != 0) {
             y *= -1;
         }
-        return new WindVector(location, y, x);
+        return new WeatherVector(location, y, x);
     }
 
     /*private static HashMap<Integer,ArrayList<Object>> placeholderFunction(Point p, float radius) {
