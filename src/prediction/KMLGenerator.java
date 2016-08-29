@@ -143,14 +143,6 @@ class KMLGenerator {
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" +
                     "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n");
             writer.write(" <Document>\n<name>" + filename + "</name>\n" +
-                    "<LookAt>\n" +
-                    "    <longitude>" + points.get(0).longitude + "</longitude>\n" +
-                    "    <latitude>" + points.get(0).latitude + "</latitude>\n" +
-                    "    <altitude>0</altitude>\n" +
-                    "    <range>14794.882995</range>\n" +
-                    "    <tilt>66.768762</tilt>\n" +
-                    "    <heading>71.131493</heading>\n" +
-                    "  </LookAt>" +
                     "    <description>Area Predicted</description>\n" +
                     "    <Style id=\"yellowLineGreenPoly\">\n" +
                     "      <LineStyle>\n" +
