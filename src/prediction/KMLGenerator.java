@@ -12,41 +12,37 @@ import java.util.Date;
  * which allows the user to visualise the output of the algorithm.
  */
 class KMLGenerator {
-    /**
-     * The MMSI.
-     */
+    //The MMSI.
     String mmsi;
-    /**
-     * The Points.
-     */
-    ArrayList<Point> points = new ArrayList<>(); //polygon points
-    /**
-     * The Path.
-     */
-    ArrayList<Point> path = new ArrayList<>(); //polygon points
-    /**
-     * The Ports.
-     */
-    ArrayList<Point> ports = new ArrayList<>();
-    /**
-     * The Index.
-     */
-    int index = 0;
 
+    // The Points.
+    ArrayList<Point> points = new ArrayList<>(); //polygon points
+
+    // The Path.
+    ArrayList<Point> path = new ArrayList<>(); //polygon points
+
+    //The Ports.
+    ArrayList<Point> ports = new ArrayList<>();
+
+    //The Index.
+    int index = 0;
+    //The Placemarks.
+    ArrayList<Point> placemarks = new ArrayList<>(); //points where pins are dropped.
 
     /**
      * Instantiates a new Kml generator.
-     *
-     * @param mmsi          the mmsi
+     * @param mmsi
      */
     KMLGenerator(String mmsi){
         this.mmsi = mmsi;
     }
 
+
     /**
-     * The Placemarks.
+     * empty constructor
      */
-    ArrayList<Point> placemarks = new ArrayList<>(); //points where pins are dropped.
+    KMLGenerator() {
+    }
 
     /**
      *
@@ -128,6 +124,56 @@ class KMLGenerator {
         }
     }
 
+    /**
+     * * This generates the KML file using the inputed path, and geometrics.
+     *
+     * @param path
+     * @param geometrics
+     * @throws IOException
+     */
+    void MakeKml(String path, String geometrics) throws IOException {
+        //creates file
+        String filename = path;
+        File outPutFile = new File(filename);//gets file name from timestamp
+
+        if (outPutFile.createNewFile()) {
+            String text = "";
+            PrintWriter writer = new PrintWriter(
+                    filename, "UTF-8");
+            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" +
+                    "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n");
+            writer.write(" <Document>\n<name>" + filename + "</name>\n" +
+                    "<LookAt>\n" +
+                    "    <longitude>" + points.get(0).longitude + "</longitude>\n" +
+                    "    <latitude>" + points.get(0).latitude + "</latitude>\n" +
+                    "    <altitude>0</altitude>\n" +
+                    "    <range>14794.882995</range>\n" +
+                    "    <tilt>66.768762</tilt>\n" +
+                    "    <heading>71.131493</heading>\n" +
+                    "  </LookAt>" +
+                    "    <description>Area Predicted</description>\n" +
+                    "    <Style id=\"yellowLineGreenPoly\">\n" +
+                    "      <LineStyle>\n" +
+                    "        <color>7f00ffff</color>\n" +
+                    "        <width>4</width>\n" +
+                    "      </LineStyle>\n" +
+                    "      <PolyStyle>\n" +
+                    "        <color>7f00ff00</color>\n" +
+                    "      </PolyStyle>\n" +
+                    "    </Style>\n");
+            //writing initial point as placemark
+
+            writer.write(geometrics + "\n");
+            writer.write("</Document>\n");
+
+
+            writer.write("</kml>\n");//closing tag
+            writer.close();
+        } else {
+            System.out.println("File Creation Unsuccessful!.");
+        }
+    }
+
 
     /**
      * Creates placemark string.
@@ -164,9 +210,7 @@ class KMLGenerator {
      * @return the string
      */
     public String createPolygon() {
-        int size = ((points.size() - 2)/2);
         Point origin = points.get(0);
-        Point second_p = points.get(1);
         String tag = "";
         tag += " <Placemark>\n" +
                 "<name>Area of Prediction</name>\n" +
