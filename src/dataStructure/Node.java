@@ -13,9 +13,10 @@ import prediction.PriorityBuoyList;
  * and nmaking up the graph
  */
 public class Node {
-    public Point[] points;//list of points making up the parameter
+    public Point[] parameter;//list of points making up the parameter
     public PriorityBuoyList buoyList;
     public ArrayList<Node> neighbors = new ArrayList<>();//neighboring nodes
+
 
 
     public boolean used = false;
@@ -29,7 +30,7 @@ public class Node {
      * @param points    the parameter
      */
     public Node(Point[] points) {
-        this.points = points;
+        this.parameter = points;
     }
 
     public void setBuoyList(PriorityBuoyList buoyList) {
