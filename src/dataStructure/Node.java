@@ -7,12 +7,6 @@ import java.util.List;
 import prediction.Point;
 import prediction.PriorityBuoyList;
 
-/**
- * Created by eliakah on 5/23/2016.
- * This class is the node class
- * used to hold the points
- * and making up the graph
- */
 public class Node {
 
     public static float size;
@@ -22,18 +16,13 @@ public class Node {
     public List vectorList;
     public Node previous;
 
-    /**
-     * constructs a walkable Node with given coordinates.
-     *
-     * @param center    the center point of the Node
-     */
-    public Node(Point center, List vectors, Node prev) {
+    public Node(Point center, Node prev) {
         this.center = center;
         this.parameter[0] = new Point(center.getLatitude() + (size / 2), center.getLongitude() - (size / 2));
         this.parameter[1] = new Point(center.getLatitude() + (size / 2), center.getLongitude() + (size / 2));
         this.parameter[2] = new Point(center.getLatitude() - (size / 2), center.getLongitude() + (size / 2));
         this.parameter[3] = new Point(center.getLatitude() - (size / 2), center.getLongitude() - (size / 2));
-        vectorList = vectors;
+        vectorList = callVector();
         previous = prev;
     }
 
@@ -41,21 +30,21 @@ public class Node {
     public Node[] getNeighbors() {
         Node[] neighbors = new Node[8];
         neighbors[0] = new Node(new Point(center.getLatitude() + size, center.getLongitude() - size)
-                                , callVector(), this);
+                                , this);
         neighbors[1] = new Node(new Point(center.getLatitude() + size, center.getLongitude())
-                                , callVector(), this);
+                                , this);
         neighbors[2] = new Node(new Point(center.getLatitude() + size, center.getLongitude() + size)
-                                , callVector(), this);
+                                , this);
         neighbors[3] = new Node(new Point(center.getLatitude(), center.getLongitude() + size)
-                                , callVector(), this);
+                                , this);
         neighbors[4] = new Node(new Point(center.getLatitude() - size, center.getLongitude() + size)
-                                , callVector(), this);
+                                , this);
         neighbors[5] = new Node(new Point(center.getLatitude() - size, center.getLongitude())
-                                , callVector(), this);
+                                , this);
         neighbors[6] = new Node(new Point(center.getLatitude() - size, center.getLongitude() - size)
-                               , callVector(), this);
+                               , this);
         neighbors[7] = new Node(new Point(center.getLatitude(), center.getLongitude() - size)
-                                , callVector(), this);
+                                , this);
         return neighbors;
     }
 
@@ -64,6 +53,7 @@ public class Node {
         return 0;
     }
 
+    //TODO: Get the list of vectors that would be contained in this node
     private List callVector() {
         return null;
     }
@@ -74,6 +64,10 @@ public class Node {
             flag &= this.parameter[i] == other.parameter[i];
         }
         return flag;
+    }
+
+    public String toString() {
+        return center.toString() + " : " + getWeight();
     }
 
 }
