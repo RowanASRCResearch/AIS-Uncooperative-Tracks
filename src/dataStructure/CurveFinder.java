@@ -10,35 +10,34 @@ import java.util.PriorityQueue;
  */
 public class CurveFinder {
 
-    private static PriorityQueue<Node> frontier = new PriorityQueue<>();
-    private static LinkedList<Node> closed = new LinkedList<>();
+    private static PriorityQueue<Path> frontier = new PriorityQueue<>();
+    private static LinkedList<Path> closed = new LinkedList<>();
 
     public static void main(String[] args) {
 
         //TODO: Can be converted to a Node count. e.g. Boat can go through 10 Nodes in the simulation time
         boolean givenTime = true;
 
-        Point[] p = new Point[1];
-        frontier.add(new Node(p, null, null));
-        Node bestNode = frontier.poll();
+        frontier.add(new Path(new Point(Float.parseFloat(args[0]), Float.parseFloat(args[1])), Float.parseFloat(args[2])));
+        Path bestPath = frontier.poll();
 
         while(givenTime) {
-            Node[] children = bestNode.getChildren();
-            for(Node child: children) {
+            Path[] children = bestPath.getChildren();
+            for(Path child: children) {
                 if(isDistinct(child))
                     frontier.add(child);
             }
-            bestNode = frontier.poll();
+            bestPath = frontier.poll();
         }
 
     }
 
-    private static boolean isDistinct(Node child) {
+    private static boolean isDistinct(Path child) {
         boolean flag = false;
-        for(Node n : closed)
-            flag |= n.equals(child);
-        for(Node n : frontier)
-            flag |= n.equals(child);
+        for(Path p : closed)
+            flag |= p.equals(child);
+        for(Path p : frontier)
+            flag |= p.equals(child);
         return !flag;
     }
 
