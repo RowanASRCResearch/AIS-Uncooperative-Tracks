@@ -1,4 +1,4 @@
-package gathering; /**
+package gathering.current; /**
  * Created by Bob S on 6/30/2016.
  */
 

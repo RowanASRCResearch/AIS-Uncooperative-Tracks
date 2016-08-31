@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import plotting.WeatherVector;
-import plotting.WindVector;
+import vectors.WeatherVector;
+import vectors.WindVector;
 import prediction.Point;
 
 public class Node {

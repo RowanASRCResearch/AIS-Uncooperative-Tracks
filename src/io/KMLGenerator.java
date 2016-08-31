@@ -1,4 +1,7 @@
-package prediction;
+package io;
+
+import prediction.Controller;
+import prediction.Point;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +14,7 @@ import java.util.Date;
  * and generating a file containing those points with the appropriate formatting,
  * which allows the user to visualise the output of the algorithm.
  */
-class KMLGenerator {
+public class KMLGenerator {
     //The MMSI.
     String mmsi;
 
@@ -33,7 +36,7 @@ class KMLGenerator {
      * Instantiates a new Kml generator.
      * @param mmsi
      */
-    KMLGenerator(String mmsi){
+    public KMLGenerator(String mmsi){
         this.mmsi = mmsi;
     }
 
@@ -41,14 +44,14 @@ class KMLGenerator {
     /**
      * empty constructor
      */
-    KMLGenerator() {
+    public KMLGenerator() {
     }
 
     /**
      *
      * Pulls the points making up the predicted area from database.
      */
-    void pull() {
+    public void pull() {
         points.addAll(Controller.database.getKML());
 
     }
@@ -56,14 +59,14 @@ class KMLGenerator {
     /**
      *Pulls the points making up the path of the vessel.
      */
-    void pullPath() {
+    public void pullPath() {
         points.addAll(Controller.database.getKMLPath(mmsi));
     }
 
     /**
      * Pulls the points representing known ports from database.
      */
-    void pullPorts() {
+    public void pullPorts() {
         points.addAll(Controller.database.getPorts());
     }
 
@@ -71,7 +74,7 @@ class KMLGenerator {
      * This generates the KML file using the helper methods.
      * @throws IOException the io exception
      */
-    void generate() throws IOException {
+    public void generate() throws IOException {
         //creates file
         String filename = (getFileName());
         File outPutFile = new File(filename);//gets file name from timestamp

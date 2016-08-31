@@ -1,14 +1,15 @@
-package prediction;
+package io;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import prediction.Controller;
 
 import java.io.*;
 
 /**
  * Created by Roberto Gonzalez on 3/23/2016.
  */
-class CSVParser {
+public class CSVParser {
 
     //global variables
     private Iterable<CSVRecord> csvRecordIterable;
@@ -19,7 +20,7 @@ class CSVParser {
      *
      * @param csvFile the csv file to be parsed
      */
-    CSVParser(File csvFile) throws CSVParserException {
+    public CSVParser(File csvFile) throws CSVParserException {
         this.csvFile = csvFile;
         //Worst case exception handling
         if(csvFile == null || Controller.database == null || !readFile()){
@@ -67,7 +68,7 @@ class CSVParser {
      *
      * @return false if an an SQLException is thrown
      */
-    boolean iterateCsv() {
+    public boolean iterateCsv() {
         int i = 0;
             /**
              * Iterates over each csv record to build an SQL query containing a given csv record's data

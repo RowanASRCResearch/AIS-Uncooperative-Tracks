@@ -1,6 +1,7 @@
 package plotting;
 
 import prediction.Point;
+import vectors.WeatherVector;
 
 import javax.swing.*;
 import java.awt.*;

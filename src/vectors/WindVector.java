@@ -1,4 +1,4 @@
-package plotting;
+package vectors;
 
 import prediction.Point;
 

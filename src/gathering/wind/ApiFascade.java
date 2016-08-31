@@ -1,7 +1,4 @@
-package gathering;
-
-import com.sun.org.apache.bcel.internal.generic.FLOAD;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+package gathering.wind;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,8 +8,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import prediction.Point;
 

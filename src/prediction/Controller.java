@@ -3,6 +3,9 @@ package prediction;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import fasade.AisDatabaseFasade;
+import io.CSVParser;
+import io.CSVParserException;
+import io.KMLGenerator;
 
 import java.io.File;
 import java.io.FileReader;
@@ -15,7 +18,7 @@ import java.sql.SQLException;
  * , and Date of last AIS signal.
  */
 public class Controller {
-    static AisDatabaseFasade database;
+    static public AisDatabaseFasade database;
     static String csv;
     static String mmsi;
     static String time;

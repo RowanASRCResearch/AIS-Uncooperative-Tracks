@@ -7,7 +7,7 @@ public class Point {
     /**
      * The Latitude.
      */
-    float latitude,
+    public float latitude,
     /**
      * The Longitude.
      */
@@ -15,7 +15,7 @@ public class Point {
     /**
      * The Description.
      */
-    String description;
+    public String description;
 
     /**
      * Instantiates a new Point.

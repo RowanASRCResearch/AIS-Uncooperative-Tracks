@@ -1,7 +1,9 @@
 package plotting;
 
 import prediction.Point;
-import gathering.Gatherer;
+import gathering.wind.Gatherer;
+import vectors.WeatherVector;
+import vectors.WindVector;
 
 import javax.swing.*;
 import java.io.IOException;

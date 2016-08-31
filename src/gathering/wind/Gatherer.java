@@ -1,8 +1,7 @@
-package gathering;
+package gathering.wind;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import com.sun.xml.internal.ws.util.InjectionPlan;
 import fasade.AisDatabaseFasade;
 import prediction.Point;
 
@@ -11,7 +10,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by eliakah on 8/18/16.

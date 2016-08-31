@@ -1,14 +1,9 @@
 package fasade;
 
-import gathering.RadiusGenerator;
-import gathering.Station;
+import gathering.wind.Station;
 import org.apache.commons.csv.CSVRecord;
 import prediction.Point;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;

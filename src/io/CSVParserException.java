@@ -1,9 +1,9 @@
-package prediction;
+package io;
 
 /**
  * The type Csv parser exception.
  */
-class CSVParserException extends Exception{
+public class CSVParserException extends Exception{
     /**
      * Instantiates a new Csv parser exception.
      *

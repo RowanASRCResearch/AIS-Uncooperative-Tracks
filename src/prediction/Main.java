@@ -1,5 +1,7 @@
 package prediction;
 
+import io.CSVParserException;
+
 import java.io.IOException;
 import java.sql.SQLException;
 

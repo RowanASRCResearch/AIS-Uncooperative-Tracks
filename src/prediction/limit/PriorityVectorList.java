@@ -1,6 +1,6 @@
 package prediction.limit;
 
-import plotting.WeatherVector;
+import vectors.WeatherVector;
 
 /**
  * Created by lapost48 on 8/23/2016.

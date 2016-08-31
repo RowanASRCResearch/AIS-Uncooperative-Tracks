@@ -1,4 +1,4 @@
-package gathering;
+package gathering.wind;
 
 /**
  * Created by Research on 8/18/2016.
