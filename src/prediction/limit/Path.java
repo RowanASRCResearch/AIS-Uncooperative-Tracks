@@ -1,4 +1,4 @@
-package dataStructure;
+package prediction.limit;
 
 import prediction.Point;
 

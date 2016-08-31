@@ -1,13 +1,11 @@
-package dataStructure;
+package prediction.limit;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import plotting.WindVector;
 import prediction.Point;
-import prediction.PriorityBuoyList;
 
 public class Node {
 
@@ -15,6 +13,7 @@ public class Node {
     private static HashMap<Point, WindVector> vectorMap = new HashMap<>();
     // Demo Only
 
+    public static Direction optimizationDirection;
     public static float size;
 
     public Point center;
@@ -28,19 +27,17 @@ public class Node {
         this.parameter[1] = new Point(center.getLatitude() + (size / 2), center.getLongitude() + (size / 2));
         this.parameter[2] = new Point(center.getLatitude() - (size / 2), center.getLongitude() + (size / 2));
         this.parameter[3] = new Point(center.getLatitude() - (size / 2), center.getLongitude() - (size / 2));
-        vectorList = callVector();
-        previous = prev;
-
         // Demo Only
-        if(vectorMap.keySet().contains(center)) {
-            vectorMap.get(center);
-        } else {
+        if(!vectorMap.keySet().contains(center)) {
             vectorMap.put(center, new WindVector(center, (float) Math.random() * 10, (float) Math.random() * 10));
         }
         // Demo Only
+        vectorList = callVector();
+        previous = prev;
+
+
     }
 
-    //TODO: Make this nicer if possible
     public Node[] getNeighbors() {
         Node[] neighbors = new Node[8];
         neighbors[0] = new Node(new Point(center.getLatitude() + size, center.getLongitude() - size)
@@ -63,13 +60,18 @@ public class Node {
     }
 
     public float getWeight() {
-        // TODO
+        // TODO: Use optimizationDirection in calculation
         return 0;
     }
 
     //TODO: Get the list of vectors that would be contained in this node
     private List callVector() {
-        return null;
+        //Demo Only
+        List demo = new ArrayList();
+        demo.add(vectorMap.get(center));
+        vectorList = demo;
+        return demo;
+        //Demo Only
     }
 
     public boolean equals(Node other) {

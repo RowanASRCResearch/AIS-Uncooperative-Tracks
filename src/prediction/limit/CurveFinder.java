@@ -1,7 +1,8 @@
-package dataStructure;
+package prediction.limit;
 
 import prediction.Point;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
@@ -21,9 +22,6 @@ public class CurveFinder {
     }
 
     /**
-     *
-     * @param startPoint
-     * @param nodeSize
      * @param time  How long the boat has been traveling in hours
      */
     public CurveFinder(Point startPoint, float nodeSize, float time) {
@@ -31,7 +29,16 @@ public class CurveFinder {
         NODE_LENGTH = (int) (time / nodeSize);
     }
 
-    private Path getPath(Direction dir) {
+    public HashMap<Direction, Path> getAllPaths() {
+        HashMap<Direction, Path> paths = new HashMap<>();
+        for(Direction dir : Direction.values()) {
+            Node.optimizationDirection = dir;
+            paths.put(dir, getPath());
+        }
+        return paths;
+    }
+
+    private Path getPath() {
         Path bestPath = frontier.poll();
 
         while(bestPath.getLength() < NODE_LENGTH) {

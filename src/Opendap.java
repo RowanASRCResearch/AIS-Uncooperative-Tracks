@@ -34,7 +34,7 @@ public class Opendap {
             String urlWithoutDotHtml = url.toString().substring(0, url.toString().length()-4);
             String[] intervals = findTimeIntervals(urlWithoutDotHtml);
 
-            //Collect value for time range, lat range and lon range
+            //Collect value for time prediction.limit, lat prediction.limit and lon prediction.limit
             String timeVal = findTimeVal(intervals, day, mo, year);
             String latVal = findLatVal(lat);
             String lonVal = findLonVal(lon);

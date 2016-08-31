@@ -87,7 +87,7 @@ class KMLGenerator {
                     "    <longitude>"+points.get(0).longitude+"</longitude>\n" +
                     "    <latitude>"+points.get(0).latitude+"</latitude>\n" +
                     "    <altitude>0</altitude>\n" +
-                    "    <range>14794.882995</range>\n" +
+                    "    <prediction.limit>14794.882995</prediction.limit>\n" +
                     "    <tilt>66.768762</tilt>\n" +
                     "    <heading>71.131493</heading>\n" +
                     "  </LookAt>" +
