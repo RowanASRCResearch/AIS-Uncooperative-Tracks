@@ -2,12 +2,18 @@ package dataStructure;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
+import plotting.WindVector;
 import prediction.Point;
 import prediction.PriorityBuoyList;
 
 public class Node {
+
+    // Demo Only
+    private static HashMap<Point, WindVector> vectorMap = new HashMap<>();
+    // Demo Only
 
     public static float size;
 
@@ -24,6 +30,14 @@ public class Node {
         this.parameter[3] = new Point(center.getLatitude() - (size / 2), center.getLongitude() - (size / 2));
         vectorList = callVector();
         previous = prev;
+
+        // Demo Only
+        if(vectorMap.keySet().contains(center)) {
+            vectorMap.get(center);
+        } else {
+            vectorMap.put(center, new WindVector(center, (float) Math.random() * 10, (float) Math.random() * 10));
+        }
+        // Demo Only
     }
 
     //TODO: Make this nicer if possible

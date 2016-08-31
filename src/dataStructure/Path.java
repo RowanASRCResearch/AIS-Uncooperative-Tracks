@@ -17,7 +17,6 @@ public class Path implements Comparable<Path> {
 
     public Path(Point center, float nodeSize) {
         Node.size = nodeSize;
-        //Call to get vectors
         head = new Node(center, null);
         length = 1;
     }

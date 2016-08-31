@@ -93,4 +93,10 @@ public class Point {
     public String toString() {
         return Float.toString(latitude) + "," + Float.toString(longitude);
     }
+
+    public boolean equals(Object other) {
+        Point otherPoint = (Point) other;
+        return this.latitude == otherPoint.latitude && this.longitude == otherPoint.longitude;
+    }
+
 }

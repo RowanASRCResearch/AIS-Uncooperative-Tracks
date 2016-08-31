@@ -10,17 +10,31 @@ import java.util.PriorityQueue;
  */
 public class CurveFinder {
 
-    private static final int NODE_LENGTH = 10;
+    private final int NODE_LENGTH;
 
-    private static PriorityQueue<Path> frontier = new PriorityQueue<>();
-    private static LinkedList<Path> closed = new LinkedList<>();
+    private PriorityQueue<Path> frontier = new PriorityQueue<>();
+    private LinkedList<Path> closed = new LinkedList<>();
 
-    public static void main(String[] args) {
+    public CurveFinder(Point startPoint, float nodeSize) {
+        frontier.add(new Path(startPoint, nodeSize));
+        NODE_LENGTH = (int) (1 / nodeSize);
+    }
 
-        frontier.add(new Path(new Point(Float.parseFloat(args[0]), Float.parseFloat(args[1])), Float.parseFloat(args[2])));
+    /**
+     *
+     * @param startPoint
+     * @param nodeSize
+     * @param time  How long the boat has been traveling in hours
+     */
+    public CurveFinder(Point startPoint, float nodeSize, float time) {
+        frontier.add(new Path(startPoint, nodeSize));
+        NODE_LENGTH = (int) (time / nodeSize);
+    }
+
+    private Path getPath(Direction dir) {
         Path bestPath = frontier.poll();
 
-        while(bestPath.getLength() < 10) {
+        while(bestPath.getLength() < NODE_LENGTH) {
             Path[] children = bestPath.getChildren();
             for(Path child: children) {
                 if(isDistinct(child))
@@ -29,11 +43,11 @@ public class CurveFinder {
             bestPath = frontier.poll();
         }
 
-        System.out.println(bestPath);
+        return bestPath;
 
     }
 
-    private static boolean isDistinct(Path child) {
+    private boolean isDistinct(Path child) {
         boolean flag = false;
         for(Path p : closed)
             flag |= p.equals(child);
