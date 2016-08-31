@@ -1,4 +1,4 @@
-package prediction;
+package prediction.limit;
 
 import plotting.WeatherVector;
 

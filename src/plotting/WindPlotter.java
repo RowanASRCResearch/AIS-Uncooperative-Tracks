@@ -80,7 +80,7 @@ public class WindPlotter {
         if(count % 3 != 0) {
             y *= -1;
         }
-        return new WeatherVector(location, y, x);
+        return new WindVector(location, y, x);
     }
 
     /*private static HashMap<Integer,ArrayList<Object>> placeholderFunction(Point p, float radius) {

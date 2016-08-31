@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import plotting.WeatherVector;
 import plotting.WindVector;
 import prediction.Point;
 
 public class Node {
 
     // Demo Only
-    private static HashMap<Point, WindVector> vectorMap = new HashMap<>();
+    private static HashMap<Point, WeatherVector> vectorMap = new HashMap<>();
     // Demo Only
 
     public static Direction optimizationDirection;
