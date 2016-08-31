@@ -153,8 +153,8 @@ class KMLGenerator {
                     "        <color>7f00ff00</color>\n" +
                     "      </PolyStyle>\n" +
                     "    </Style>\n");
-            //writing initial point as placemark
 
+            //writing initial point as placemark
             writer.write(geometrics + "\n");
             writer.write("</Document>\n");
 
@@ -235,6 +235,36 @@ class KMLGenerator {
         return tag;
     }
 
+    public String polygon(String des, String body) {
+        Point origin = points.get(0);
+        String tag = "";
+        tag += " <Placemark>\n" +
+                "<name>" + des + "</name>\n" +
+                "<Polygon>\n" +
+                "<extrude>1</extrude>\n" +
+                "<altitudeMode>clampToGround</altitudeMode>\n" +
+                "<outerBoundaryIs>\n" +
+                "<LinearRing>\n" +
+                "<coordinates>\n";
+
+
+        tag += body + "\n";
+
+        tag += "</coordinates>\n" +
+                "</LinearRing>\n" +
+                "</outerBoundaryIs>\n" +
+                "</Polygon>\n" +
+                " <Style> \n" +
+                "  <PolyStyle>  \n" +
+                "   <color>#a00000ff</color>\n" +
+                "  <outline>0</outline>\n" +
+                "  </PolyStyle> \n" +
+                " </Style>" +
+                "</Placemark>\n";
+
+        return tag;
+    }
+
 
     /**
      * Create path string.
@@ -259,6 +289,32 @@ class KMLGenerator {
             tag +=  path.get(i).getLongitude() + "," + path.get(i).getLatitude() + "\n";
             tag +=  path.get(i+1).getLongitude() + "," + path.get(i+1).getLatitude() + "\n";
 
+            tag += "  </coordinates>\n" +
+                    "      </LineString>\n" +
+                    "    </Placemark>\n";
+
+        }
+
+
+        return tag;
+    }
+
+    public String path(String des, String body) {
+
+        String tag = "";
+
+
+        for (int i = 0; i < (path.size() - 1); i++) {
+            tag += "    <Placemark>\n" +
+                    "      <name>Vessel Path</name>\n" +
+                    "      <description>" + des + "</description>\n" +
+                    "      <styleUrl>#yellowLineGreenPoly</styleUrl>\n" +
+                    "      <LineString>\n" +
+                    "        <extrude>1</extrude>\n" +
+                    "        <tessellate>1</tessellate>\n" +
+                    "        <altitudeMode>absolute</altitudeMode>\n" +
+                    "        <coordinates>\n";
+            tag += body + "\n";
             tag += "  </coordinates>\n" +
                     "      </LineString>\n" +
                     "    </Placemark>\n";
