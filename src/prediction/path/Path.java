@@ -1,4 +1,4 @@
-package prediction.limit;
+package prediction.path;
 
 import prediction.Point;
 

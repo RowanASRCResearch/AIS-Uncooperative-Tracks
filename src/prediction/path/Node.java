@@ -1,9 +1,10 @@
-package prediction.limit;
+package prediction.path;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import prediction.limit.Direction;
 import vectors.WeatherVector;
 import vectors.WindVector;
 import prediction.Point;

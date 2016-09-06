@@ -1,6 +1,8 @@
 package prediction.limit;
 
 import prediction.Point;
+import prediction.path.Node;
+import prediction.path.Path;
 
 import java.util.HashMap;
 import java.util.LinkedList;
