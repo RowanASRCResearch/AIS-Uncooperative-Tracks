@@ -76,6 +76,14 @@ public class Node {
         //Demo Only
     }
 
+    public boolean contains(Point point) {
+        boolean ret = point.getLatitude() < parameter[0].getLatitude();
+        ret &= point.getLatitude() > parameter[2].getLatitude();
+        ret &= point.getLongitude() > parameter[0].getLongitude();
+        ret &= point.getLongitude() < parameter[2].getLongitude();
+        return ret;
+    }
+
     public boolean equals(Node other) {
         boolean flag = true;
         for(int i = 0; i < parameter.length; i++) {

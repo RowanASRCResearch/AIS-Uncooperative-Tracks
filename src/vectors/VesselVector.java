@@ -11,4 +11,8 @@ public class VesselVector extends GeoVector {
         super(location, latComponent, lonComponent);
     }
 
+    public void simulate(int numSeconds, WindVector windVector, CurrentVector currentVector) {
+
+    }
+
 }

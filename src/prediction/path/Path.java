@@ -31,8 +31,18 @@ public class Path implements Comparable<Path> {
         return children;
     }
 
+    public void append(Node n) {
+        if(n.previous != head)
+            n.previous = head;
+        head = n;
+    }
+
     public int getLength() {
         return length;
+    }
+
+    public Node getHead() {
+        return head;
     }
 
     public boolean equals(Path other) {
