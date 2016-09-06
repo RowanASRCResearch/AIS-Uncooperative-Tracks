@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import prediction.limit.Direction;
-import vectors.WeatherVector;
+import vectors.GeoVector;
 import vectors.WindVector;
 import prediction.Point;
 
 public class Node {
 
     // Demo Only
-    private static HashMap<Point, WeatherVector> vectorMap = new HashMap<>();
+    private static HashMap<Point, GeoVector> vectorMap = new HashMap<>();
     // Demo Only
 
     public static Direction optimizationDirection;

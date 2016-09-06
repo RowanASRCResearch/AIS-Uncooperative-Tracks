@@ -2,7 +2,7 @@ package plotting;
 
 import prediction.Point;
 import gathering.wind.Gatherer;
-import vectors.WeatherVector;
+import vectors.GeoVector;
 import vectors.WindVector;
 
 import javax.swing.*;
@@ -30,7 +30,7 @@ public class WindPlotter {
         Gatherer gatherer = new Gatherer(center, radius);
         HashMap<Integer,ArrayList<Object>> windData = gatherer.getStations();
 
-        ArrayList<WeatherVector> vectors = new ArrayList<>();
+        ArrayList<GeoVector> vectors = new ArrayList<>();
 
         Set<Integer> buoyIDs = windData.keySet();
         for(Integer id : buoyIDs) {
@@ -54,13 +54,13 @@ public class WindPlotter {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private static void addVector(WeatherVector vector) {
+    private static void addVector(GeoVector vector) {
         window.plotVector(vector);
     }
 
-    private static void addVectors(Collection<WeatherVector> collection) {window.plotVectors(collection);}
+    private static void addVectors(Collection<GeoVector> collection) {window.plotVectors(collection);}
 
-    private static WeatherVector convertVector(Point location, float windSpeed, float windAngle) {
+    private static GeoVector convertVector(Point location, float windSpeed, float windAngle) {
         int count = 0;
         while(windAngle > 90) {
             windAngle -= 90;

@@ -1,6 +1,6 @@
 package prediction.limit;
 
-import vectors.WeatherVector;
+import vectors.GeoVector;
 
 /**
  * Created by lapost48 on 8/23/2016.
@@ -22,13 +22,13 @@ public class PriorityVectorList {
         }
     }
 
-    WeatherVector[] vectors;
+    GeoVector[] vectors;
 
     public PriorityVectorList() {
-        this.vectors = new WeatherVector[4];
+        this.vectors = new GeoVector[4];
     }
 
-    public WeatherVector get(Direction direction) {
+    public GeoVector get(Direction direction) {
         switch(direction) {
             case NORTH: return vectors[0];
             case SOUTH: return vectors[1];
@@ -38,22 +38,22 @@ public class PriorityVectorList {
         }
     }
 
-    public void add(WeatherVector weatherVector) {
+    public void add(GeoVector geoVector) {
         for(int i = 0; i < vectors.length; i++) {
             if(vectors[i] == null) {
-                vectors[i] = weatherVector;
+                vectors[i] = geoVector;
             } else {
                 Direction direction = Direction.values()[i];
-                float vectorCoordinate = vectorCoordinate(weatherVector, direction);
+                float vectorCoordinate = vectorCoordinate(geoVector, direction);
                 if(direction.getCoordinate() < vectorCoordinate) {
                     direction.setCoordinate(vectorCoordinate);
-                    vectors[i] = weatherVector;
+                    vectors[i] = geoVector;
                 }
             }
         }
     }
 
-    private float vectorCoordinate(WeatherVector vector, Direction direction) {
+    private float vectorCoordinate(GeoVector vector, Direction direction) {
         float coordinate = 1;
         switch(direction) {
             case SOUTH: coordinate *= -1;
