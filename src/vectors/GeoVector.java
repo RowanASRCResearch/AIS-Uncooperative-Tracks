@@ -17,6 +17,33 @@ public abstract class GeoVector {
         this.longComponent = longComponent;
     }
 
+    public GeoVector(Point location, float speed, int vectorAngle) {
+        int count = 0;
+        while(vectorAngle > 90) {
+            vectorAngle -= 90;
+            count++;
+        }
+        double angle = (float) (vectorAngle * (Math.PI / 180));
+        float x;
+        float y;
+        if(count % 2 == 0) {
+            x = (float) (speed * Math.sin(angle));
+            y = (float) (speed * Math.cos( angle));
+        } else {
+            x = (float) (speed * Math.cos( angle));
+            y = (float) (speed * Math.sin( angle));
+        }
+        if(count > 1) {
+            x *= -1;
+        }
+        if(count % 3 != 0) {
+            y *= -1;
+        }
+        this.location = location;
+        this.latComponent = y;
+        this.longComponent = x;
+    }
+
     public float getMagnitude() {
         return (float) Math.sqrt(Math.pow(latComponent, 2) + Math.pow(longComponent, 2));
     }

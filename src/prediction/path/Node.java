@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import prediction.limit.Direction;
+import vectors.CurrentVector;
 import vectors.GeoVector;
+import vectors.WeatherVector;
 import vectors.WindVector;
 import prediction.Point;
 
@@ -64,6 +66,13 @@ public class Node {
     public float getWeight() {
         // TODO: Use optimizationDirection in calculation
         return 0;
+    }
+
+    public WeatherVector[] aggregatedVectors() {
+        WeatherVector[] vectors = new WeatherVector[2];
+        vectors[0] = (WindVector) vectorList.get(0);
+        vectors[1] = (CurrentVector) vectorList.get(1);
+        return vectors;
     }
 
     //TODO: Get the list of vectors that would be contained in this node
