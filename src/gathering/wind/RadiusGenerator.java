@@ -47,12 +47,12 @@ public class RadiusGenerator {
         g.insertStations("stations.csv");
     }
 
-    Point[] getCircle() {
+    public Point[] getCircle() {
         return points;
     }
 
     /**
-     * generates coordiantes of a point given angle and distance
+     * generates coordiantes of a point given angle  and distance
      * @param angle
      * @param distance
      * @return p
@@ -96,7 +96,7 @@ public class RadiusGenerator {
      * @param p
      * @return
      */
-    Boolean contains(Point[] polygon, Point p) {
+    public Boolean contains(Point[] polygon, Point p) {
         Polygon poly = new Polygon();
         for (int i = 0; i < polygon.length; i++) {
             poly.addPoint((int) polygon[i].getLatitude(), (int) polygon[i].getLongitude());

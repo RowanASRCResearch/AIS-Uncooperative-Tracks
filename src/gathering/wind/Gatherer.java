@@ -17,14 +17,13 @@ import java.util.HashMap;
 public class Gatherer {
     HashMap<Integer, ArrayList<Object>> stations;
     Point point;
-    int radius;
+    double radius;
     Point[] circle;
     ArrayList<Station> stList;
 
-
-    public Gatherer(Point point, int radius) throws IOException {
+    public Gatherer(Point point, float radius) throws IOException {
         this.point = point;
-        this.radius = (int) (radius * 0.95);
+        this.radius = (radius * 10);
         stList = new ArrayList<>();
         stations = new HashMap();
         RadiusGenerator g = new RadiusGenerator(point.getLatitude(), point.getLongitude(), 30, radius);
@@ -46,11 +45,16 @@ public class Gatherer {
         float west  = point.getLongitude() - lonDiff;
         ArrayList<Station> tempList = fascade.getStations(north, south, east, west);
         for (int i = 0; i < tempList.size(); i++) {
-            if (g.contains(circle, new Point(tempList.get(i).getLat(), tempList.get(i).getLat()))) {
+            if (g.contains(circle, new Point(tempList.get(i).getLat(), tempList.get(i).getLon()))) {
                 stList.add(tempList.get(i));
             }
         }
 
+        for (int i = 0; i < stList.size(); i++) {
+            System.out.println(stList.get(i).getLat() + "," + stList.get(i).getLon());
+        }
+
+        /**
         ApiFascade apifascade;
         for (int i = 0; i < stList.size(); i++) {
             apifascade = new ApiFascade(stList.get(i).getId() + "", "20130808%2015:00", "20130808%2015:00");
@@ -58,8 +62,26 @@ public class Gatherer {
             String scan = apifascade.scanPage(text);
             stations.put(stList.get(i).getId(), apifascade.formatData(scan));
         }
+         */
 
 
+    }
+
+    public static void main(String args[]) throws IOException {
+        Point p = new Point(18.3489f, -64.8642f);
+        Gatherer gatherer = new Gatherer(p, 10f);
+    }
+
+    /**
+     * THis method us used to generate a random number from a range
+     * This will help randomising the fake current and wind data
+     */
+
+
+    public int generateNumFromRange(int from, int to) {
+        int genNum = 0;
+
+        return genNum;
     }
 
 
@@ -108,4 +130,6 @@ public class Gatherer {
             this.lon = lon;
         }
     }
+
+
 }
