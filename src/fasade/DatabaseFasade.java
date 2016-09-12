@@ -9,9 +9,6 @@ import java.util.LinkedHashMap;
 public abstract class DatabaseFasade {
 
     private final boolean testing = true;
-
-    private String driver;
-
     protected Connection connection;
     protected String databaseName;
     protected String[] tableNames;
@@ -19,6 +16,7 @@ public abstract class DatabaseFasade {
     protected String user;
     protected String password;
     protected int numberOfColumns;
+    private String driver;
 
     public DatabaseFasade() {
         if(!testing) {
@@ -34,7 +32,7 @@ public abstract class DatabaseFasade {
 
     protected void openConnection() {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName + "?useSSL=false", user, password);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName + "?useSSL=false", "root", "");
         } catch(SQLException e) {
             System.err.println("Error connecting to database!");
             System.err.println(e.getMessage());
