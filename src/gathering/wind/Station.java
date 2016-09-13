@@ -11,6 +11,7 @@ public class Station {
     int id;
     float lat;
     float lon;
+    double distance;
 
     public Station(int id, float lat, float lon) {
         this.id = id;
