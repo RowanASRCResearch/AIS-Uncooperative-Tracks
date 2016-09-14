@@ -11,6 +11,6 @@ import java.sql.SQLException;
 public class Main {
     public static void main(String[] args) throws SQLException, IOException, CSVParserException {
 
-        new Controller("new.csv", "244790009", "2016-04-17", "150");
+        new Controller("new.csv", "244790009", "2016-04-17", "10");
     }
 }
