@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import prediction.Point;
 
@@ -20,29 +22,26 @@ import prediction.Point;
 public class ApiFascade {
 
     String station = ""; //station id
-    String from = ""; //start date
-    String to = ""; //end date
+    String date = "";
     String datum = "MSL"; //default datum value
     String baseUrl = "http://tidesandcurrents.noaa.gov/api/datagetter?"; //base url
-    String endUrl = "&units=metric&time_zone=gmt&format=json"; //other half of url
+    String endUrl = "&units=metric&time_zone=gmt&format=xml"; //other half of url
 
 
     /**
-     * @param station
-     * @param to
-     * @param from    Constructor
+     * @param station Constructor
      */
-    public ApiFascade(String station, String to, String from) {
+    public ApiFascade(String station) {
 
         this.station = station;
-        this.to = to;
-        this.from = from;
+
 
     }
 
     public static void main(String args[]) throws IOException {
 
-        ApiFascade fascade = new ApiFascade("8454000", "20130808%2015:00", "20130808%2015:00");
+
+        ApiFascade fascade = new ApiFascade("8454000");
         String text = fascade.urlBuilder();
         System.out.print(text);
         String scan = fascade.scanPage(text);
@@ -56,8 +55,8 @@ public class ApiFascade {
      */
     String urlBuilder() {
         String url = "";
-
-        url = baseUrl + "begin_date=" + from + "&end_date=" + to + "&station=" + station + "&product=wind&datum=" + datum + endUrl;
+        String date = getDate() + ":00";
+        url = baseUrl + "&begin_date=" + date + "&end_date=" + date + "&station=" + station + "&product=wind&datum=" + datum + endUrl;
 
         return url;
     }
@@ -156,4 +155,10 @@ public class ApiFascade {
         return ogString;
     }
 
+
+    private String getDate() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd%20HH").format(new java.util.Date());
+        return timeStamp;
+
+    }
 }
