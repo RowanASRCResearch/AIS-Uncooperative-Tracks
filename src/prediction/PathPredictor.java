@@ -38,7 +38,6 @@ public class PathPredictor {
         vesselSpeed = Controller.database.getLastSpeed(mmsi);
         vesselCourse = Controller.database.getLastCourse(mmsi);
         vesselSize(mmsi);
-
         Controller.database.insertLocation(initialCoordinates[0], initialCoordinates[1]);
     }
 
@@ -76,7 +75,7 @@ public class PathPredictor {
 
     /**
      * Calculates the distance traveled (in kilometers)
-     * in the given time (in minutes)
+     * in 1 minute
      *
      * @param knots Speed the vessel in travels (in knots).
      * @return the distance
@@ -86,7 +85,7 @@ public class PathPredictor {
         //Converts given knots to kilometers per second.
         float knotsToKps = (knots * 0.000514444f);
 
-        //Converts given minutes to seconds.
+        //1 minute
         float timeToSeconds = 60;
 
         //The distance traveled by the vessel, in meters.
@@ -95,6 +94,7 @@ public class PathPredictor {
 
 
     /**
+     * TODO: create table with specific name, input points as entries
      * Populates the database with the calculated points.
      * They are added in such a way to make drawing and viewing the area easy.
      */
