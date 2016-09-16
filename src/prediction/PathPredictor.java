@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
+ * TODO: create enhenritence structure with a 'predictor' parent
  * Created by eliakah on 9/14/16.
  * This class is responsible for calculating a geometric area that
  * represents possible location of a vessel based on the minutes
@@ -39,6 +40,30 @@ public class PathPredictor {
         vesselCourse = Controller.database.getLastCourse(mmsi);
         vesselSize(mmsi);
         Controller.database.insertLocation(initialCoordinates[0], initialCoordinates[1]);
+    }
+
+    /**
+     * Instantiates a new Area predictor.
+     *
+     * @param mmsi       The MMSI number of the vessel being located.
+     * @param date       the date
+     * @param travelTime The minutes passed since experiencing a loss-of-signal.
+     */
+    PathPredictor(String mmsi, String date, String travelTime) {
+        this.travelTime = Integer.parseInt((travelTime));
+        this.maxTurn = maxTurn;
+        String[] dateSplit = Controller.database.getLastContact(mmsi);
+        lastContactTime = dateSplit[1];
+        initialCoordinates = Controller.database.getLastLocation(mmsi);
+        vesselSpeed = Controller.database.getLastSpeed(mmsi);
+        vesselCourse = Controller.database.getLastCourse(mmsi);
+        vesselSize(mmsi);
+        Controller.database.insertLocation(initialCoordinates[0], initialCoordinates[1]);
+    }
+
+    private float getMaxTurn() {
+        float turn = 0;
+        return turn;
     }
 
     /**
@@ -146,9 +171,7 @@ public class PathPredictor {
         lat2 = (float) Math.toDegrees(lat2);
         lon2 = (float) Math.toDegrees(lon2);
 
-        Point destinationCoordinates = new Point(lat2, lon2);
-
-        return destinationCoordinates;
+        return (new Point(lat2, lon2));
     }
 
 
@@ -158,7 +181,7 @@ public class PathPredictor {
      *
      * @param mmsi the targeted vessel's MMSI number
      */
-    void vesselSize(String mmsi) {
+    private void vesselSize(String mmsi) {
         //if the total length of the vessel is greater than or equal to 100 meters
         if (Controller.database.getVesselSize(mmsi) >= 100) {
             vesselTurnRate = 3f;
