@@ -1,70 +1,37 @@
 package prediction;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
 /**
  * TODO: create enhenritence structure with a 'predictor' parent
  * Created by eliakah on 9/14/16.
- * This class is responsible for calculating a geometric area that
- * represents possible location of a vessel based on the minutes
- * passed since the vessel experienced a loss-of-signal.
+ * This class is responsible for calculating the trajectory of a vessel
+ * going at a certain speed on the ocean and show how said trajectory is
+ * affected by currents and winds using data pulled from buoy stations
  */
 public class PathPredictor {
 
-    private float[] initialCoordinates = new float[2];
-    private int travelTime;
-    private float vesselSpeed;
-    private float vesselCourse;
-    private String lastContactTime;
-    private float maxTurn = 180;
-    private float vesselTurnRate;
-    private ArrayList<Point> leftCoordinates = new ArrayList<>();
-    private ArrayList<Point> rightCoordinates = new ArrayList<>();
-    private ArrayList<Point> forwardCoordinates = new ArrayList<>();
+    private Point initialCoordinates; //starting point
+    private int travelTime; //# of minutes to run algorithm
+    private float vesselSpeed; //vessel speed
+    private float vesselCourse; //vessel orientation , in degrees
+    private float maxTurn = 180; //maximum turn allowed
+    private float vesselTurnRate = 5f;//vesselTurnRate is set to 5 degrees.
+
 
     /**
-     * Instantiates a new Area predictor.
-     *
-     * @param mmsi       The MMSI number of the vessel being located.
-     * @param date       the date
-     * @param travelTime The minutes passed since experiencing a loss-of-signal.
+     * @param initialCoordinates
+     * @param travelTime
+     * @param travelTime         The minutes passed since experiencing a loss-of-signal.
      */
-    PathPredictor(String mmsi, String date, String travelTime, Float maxTurn) {
+    PathPredictor(Point initialCoordinates, String travelTime, float vesselCourse, float vesselSpeed, Float maxTurn) {
+        this.initialCoordinates = initialCoordinates;
         this.travelTime = Integer.parseInt((travelTime));
         this.maxTurn = maxTurn;
-        String[] dateSplit = Controller.database.getLastContact(mmsi);
-        lastContactTime = dateSplit[1];
-        initialCoordinates = Controller.database.getLastLocation(mmsi);
-        vesselSpeed = Controller.database.getLastSpeed(mmsi);
-        vesselCourse = Controller.database.getLastCourse(mmsi);
-        vesselSize(mmsi);
-        Controller.database.insertLocation(initialCoordinates[0], initialCoordinates[1]);
+        this.vesselSpeed = vesselSpeed;
+        this.vesselCourse = vesselCourse;
     }
 
-    /**
-     * Instantiates a new Area predictor.
-     *
-     * @param mmsi       The MMSI number of the vessel being located.
-     * @param date       the date
-     * @param travelTime The minutes passed since experiencing a loss-of-signal.
-     */
-    PathPredictor(String mmsi, String date, String travelTime) {
-        this.travelTime = Integer.parseInt((travelTime));
-        this.maxTurn = maxTurn;
-        String[] dateSplit = Controller.database.getLastContact(mmsi);
-        lastContactTime = dateSplit[1];
-        initialCoordinates = Controller.database.getLastLocation(mmsi);
-        vesselSpeed = Controller.database.getLastSpeed(mmsi);
-        vesselCourse = Controller.database.getLastCourse(mmsi);
-        vesselSize(mmsi);
-        Controller.database.insertLocation(initialCoordinates[0], initialCoordinates[1]);
-    }
-
-    private float getMaxTurn() {
-        float turn = 0;
-        return turn;
-    }
 
     /**
      * Execute the predictive algorithm.
@@ -72,9 +39,6 @@ public class PathPredictor {
      * @return the boolean flag
      */
     public boolean execute() {
-//            setLeftBoundaryCoordinates();
-//            setRightBoundaryCoordinates();
-        populateDB();
         return true;
     }
 
@@ -119,31 +83,6 @@ public class PathPredictor {
 
 
     /**
-     * TODO: create table with specific name, input points as entries
-     * Populates the database with the calculated points.
-     * They are added in such a way to make drawing and viewing the area easy.
-     */
-    public void populateDB() {
-        int pointCounter = 1;
-        for (Point p : leftCoordinates) {
-            Controller.database.insertLocation(p.getLatitude(), p.getLongitude());
-            pointCounter++;
-        }
-
-        for (Point p : forwardCoordinates) {
-            Controller.database.insertLocation(p.getLatitude(), p.getLongitude());
-            pointCounter++;
-        }
-
-        for (int i = rightCoordinates.size() - 1; i >= 0; i--) {
-            Point p = new Point(rightCoordinates.get(i).getLatitude(), rightCoordinates.get(i).getLongitude());
-            Controller.database.insertLocation(p.getLatitude(), p.getLongitude());
-            pointCounter++;
-        }
-    }
-
-
-    /**
      * Calculate coordinates based on previous latitude, longitude, heading, and distance.
      * Formula Reference: http://stackoverflow.com/questions/7222382/get-lat-long-given-current-point-distance-and-bearing
      *
@@ -173,21 +112,4 @@ public class PathPredictor {
 
         return (new Point(lat2, lon2));
     }
-
-
-    /**
-     * This method will determine whether or not the vessel's length is greater than or equal to 100 meters.
-     * If it is, then is sets the vesselTurnRate to 3 degrees. Otherwise, vesselTurnRate is set to 5 degrees.
-     *
-     * @param mmsi the targeted vessel's MMSI number
-     */
-    private void vesselSize(String mmsi) {
-        //if the total length of the vessel is greater than or equal to 100 meters
-        if (Controller.database.getVesselSize(mmsi) >= 100) {
-            vesselTurnRate = 3f;
-            return;
-        }
-        vesselTurnRate = 5f;
-    }
-
 }
