@@ -34,12 +34,6 @@ public class PathPredictor {
     }
 
 
-    public static void main(String args[]) {
-
-
-    }
-
-
     /**
      * Execute the predictive algorithm.
      *
