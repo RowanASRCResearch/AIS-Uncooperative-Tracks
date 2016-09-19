@@ -12,7 +12,6 @@ import java.util.Collections;
 public class PathPredictor {
 
     private Point initialCoordinates; //starting point
-    private int travelTime; //# of minutes to run algorithm
     private float vesselSpeed; //vessel speed
     private float vesselCourse; //vessel orientation , in degrees
     private float maxTurn = 180; //maximum turn allowed
@@ -20,16 +19,24 @@ public class PathPredictor {
 
 
     /**
+     *
      * @param initialCoordinates
-     * @param travelTime
-     * @param travelTime         The minutes passed since experiencing a loss-of-signal.
+     * @param vesselCourse
+     * @param vesselSpeed
+     * @param maxTurn
      */
-    PathPredictor(Point initialCoordinates, String travelTime, float vesselCourse, float vesselSpeed, Float maxTurn) {
+
+    PathPredictor(Point initialCoordinates, float vesselCourse, float vesselSpeed, Float maxTurn) {
         this.initialCoordinates = initialCoordinates;
-        this.travelTime = Integer.parseInt((travelTime));
         this.maxTurn = maxTurn;
         this.vesselSpeed = vesselSpeed;
         this.vesselCourse = vesselCourse;
+    }
+
+
+    public static void main(String args[]) {
+
+
     }
 
 
@@ -38,29 +45,18 @@ public class PathPredictor {
      *
      * @return the boolean flag
      */
-    public boolean execute() {
-        return true;
+    public Point execute() {
+
+        Point destination;
+        Float distance = getDistanceByMinute(vesselSpeed); //gets distance after one minute
+        destination = calculateCoordinates(initialCoordinates.latitude,
+                initialCoordinates.longitude, vesselCourse, distance);//gets destiniation coor based on distance and angle
+
+        return destination;
+
     }
 
-    /**
-     * Calculates the distance traveled (in kilometers)
-     * in the given time (in minutes)
-     *
-     * @param time  Minutes the vessel has been traveling.
-     * @param knots Speed the vessel in travels (in knots).
-     * @return the distance
-     */
-    public float getDistance(int time, float knots) {
 
-        //Converts given knots to kilometers per second.
-        float knotsToKps = (knots * 0.000514444f);
-
-        //Converts given minutes to seconds.
-        float timeToSeconds = time * 60;
-
-        //The distance traveled by the vessel, in meters.
-        return (knotsToKps * timeToSeconds);
-    }
 
     /**
      * Calculates the distance traveled (in kilometers)
