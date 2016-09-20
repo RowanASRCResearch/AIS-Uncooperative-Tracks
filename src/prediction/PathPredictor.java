@@ -6,7 +6,7 @@ import java.util.Collections;
  * TODO: create enhenritence structure with a 'predictor' parent
  * Created by eliakah on 9/14/16.
  * This class is responsible for calculating the trajectory of a vessel
- * going at a certain speed on the ocean and show how said trajectory is
+ * going at a certain speed on the ocean and 2show how said trajectory is
  * affected by currents and winds using data pulled from buoy stations
  */
 public class PathPredictor {
@@ -14,7 +14,6 @@ public class PathPredictor {
     private Point initialCoordinates; //starting point
     private float vesselSpeed; //vessel speed
     private float vesselCourse; //vessel orientation , in degrees
-    private float maxTurn = 180; //maximum turn allowed
     private float vesselTurnRate = 5f;//vesselTurnRate is set to 5 degrees.
 
 
@@ -23,14 +22,20 @@ public class PathPredictor {
      * @param initialCoordinates
      * @param vesselCourse
      * @param vesselSpeed
-     * @param maxTurn
      */
 
-    PathPredictor(Point initialCoordinates, float vesselCourse, float vesselSpeed, Float maxTurn) {
+    PathPredictor(Point initialCoordinates, float vesselCourse, float vesselSpeed) {
         this.initialCoordinates = initialCoordinates;
-        this.maxTurn = maxTurn;
         this.vesselSpeed = vesselSpeed;
         this.vesselCourse = vesselCourse;
+    }
+
+
+    public static void main(String args[]) {
+
+        PathPredictor p = new PathPredictor(new Point(0, 0), 225, 15);
+        System.out.println(p.execute().latitude + ", " + p.execute().longitude);
+
     }
 
 
@@ -87,7 +92,6 @@ public class PathPredictor {
         //Calculates the destination coordinates given the initial coordinates, heading, and time traveled.
         float R = 6378.1f; //Radius of the Earth
         float bearing = (float) Math.toRadians(heading);
-
         float lat1 = (float) Math.toRadians(lat); //Current latitude point converted to radians.
         float lon1 = (float) Math.toRadians(lon); //Current longitude point converted to radians.
 

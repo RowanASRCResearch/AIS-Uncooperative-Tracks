@@ -88,7 +88,7 @@ public class Gatherer {
 
     /**
      * THis method us used to generate a random number from a range
-     * This will help randomising the fake current and wind data
+     * This will help randomising the fake Vector and wind data
      */
 
 
