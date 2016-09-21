@@ -24,7 +24,7 @@ public class PathPredictor {
      * @param vesselSpeed
      */
 
-    PathPredictor(Point initialCoordinates, float vesselCourse, float vesselSpeed) {
+    public PathPredictor(Point initialCoordinates, float vesselCourse, float vesselSpeed) {
         this.initialCoordinates = initialCoordinates;
         this.vesselSpeed = vesselSpeed;
         this.vesselCourse = vesselCourse;
