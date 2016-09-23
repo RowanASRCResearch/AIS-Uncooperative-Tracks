@@ -3,6 +3,8 @@ package prediction.limit;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import fasade.AisDatabaseFasade;
+import gathering.wind.RadiusGenerator;
+import gathering.wind.Station;
 import io.KMLBuilder;
 import prediction.Controller;
 import prediction.PathPredictor;
@@ -13,6 +15,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Random;
+import java.util.function.IntBinaryOperator;
 
 /**
  * Created by eliakah on 9/20/16.
@@ -22,16 +28,16 @@ import java.util.ArrayList;
 public class AreaGenerator {
 
     public static AisDatabaseFasade database;
-    private static Vector vessel;
+    private static GeoVector vessel;
     private static int travelTime;
     private static float vesselTurnRate;
 
-    public AreaGenerator(Vector vessel, int travelTime) {
+    public AreaGenerator(GeoVector vessel, int travelTime) {
         this.vessel = vessel;
         this.travelTime = travelTime;
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
         //extract arguments
         String mmsi = args[0];
         String date = args[1];
@@ -51,38 +57,73 @@ public class AreaGenerator {
         //store info pulled
         Point initialCoordinates = new Point(database.getLastLocation(mmsi)[0], database.getLastLocation(mmsi)[1]);
         float vesselSpeed = database.getLastSpeed(mmsi);
+        System.out.print("vessel speed" + vesselSpeed);
         float vesselCourse = database.getLastCourse(mmsi);
         vesselSize(mmsi);
 
-        //creating vessel vector
-        Vector vessel = new Vector(initialCoordinates, vesselSpeed, vesselCourse);
-        AreaGenerator gen = new AreaGenerator(vessel, travelTime);
 
-        ArrayList<Point> result = execute();
+        //creating vessel vector
+        GeoVector vessel = new GeoVector(initialCoordinates, vesselSpeed, (int) vesselCourse);
+        AreaGenerator gen = new AreaGenerator(vessel, travelTime);
+        ArrayList<GeoVector> buoys = gen.generateGrid(new Point(35, 15), new Point(37, 17));
+
+        ArrayList<Point> result = execute(buoys);
+
 
         //create the kml
 
         //KMLBuilder builder = new KMLBuilder("testKML", "test for the path in a certain direction ");
 
+        KMLBuilder builder = new KMLBuilder();
+        String tag = builder.path(result, "path");
+        builder.createFile(tag);
         for (int i = 0; i < result.size(); i++) {
             System.out.println(result.get(i).latitude + ", " + result.get(i).longitude);
         }
 
     }
 
-    static ArrayList<Point> execute() {
+    static ArrayList<Point> execute(ArrayList<GeoVector> buoys) {
         ArrayList<Point> path = new ArrayList<>();
+        RadiusGenerator g;
 
-        PathPredictor predictor = new PathPredictor(vessel.location, vessel.getDirection(), vessel.getSpeed());
+        PathPredictor predictor = new PathPredictor(vessel.location, vessel.getAngle(), vessel.getSpeed());
         path.add(new Point(vessel.location.latitude, vessel.location.longitude));
         for (int i = 0; i < travelTime; i++) {
 
             path.add(predictor.execute());
             vessel.location = predictor.execute();
-            predictor = new PathPredictor(vessel.location, vessel.getDirection(), vessel.getSpeed());
+            g = new RadiusGenerator(vessel.location.getLatitude(), vessel.location.getLongitude(), 30, 10);
+            ArrayList<GeoVector> v = new ArrayList<>();
+            for (int j = 0; j < buoys.size(); j++) {
+                if (g.contains(g.getCircle(), buoys.get(j).location)) {
+                    v.add(buoys.get(j));
+                }
+            }
+            v = rankStations(vessel.location, v);
+            vessel = vessel.addVectors(v.get(0));
+
+            predictor = new PathPredictor(vessel.location, vessel.getAngle(), vessel.getMagnitude());
         }
 
         return path;
+    }
+
+    public static ArrayList<GeoVector> rankStations(Point origin, ArrayList<GeoVector> vectors) {
+        Comparator<GeoVector> comp = new Comparator<GeoVector>() {
+            @Override
+            public int compare(GeoVector s1, GeoVector s2) {
+                if (getDistance(s1.location, origin) < getDistance(s2.location, origin)) {
+                    return 1;
+                } else return -1;
+
+            }
+        };
+
+        Collections.sort(vectors, comp);
+
+
+        return vectors;
     }
 
     /**
@@ -100,11 +141,37 @@ public class AreaGenerator {
         vesselTurnRate = 5f;
     }
 
+    static int getDistance(Point start, Point end) {
+        int distance = (int) Math.sqrt((int) (end.latitude - start.latitude) ^ 2 + (int) (end.longitude - start.longitude) ^ 2);
+        if (distance < 0) {
+            distance *= -1;
+        }
+
+        return distance;
+    }
+
     Vector ApplyWeatherData() {
         Vector newVessel = null; //temporary
         //determine
 
         return newVessel;
+    }
+
+    ArrayList<GeoVector> generateGrid(Point start, Point end) {
+        Random rn = new Random();
+        float xIncrement = (end.latitude - start.latitude) / 12;
+        float yIncrement = (end.longitude - start.longitude) / 12;
+        ArrayList<GeoVector> buoys = new ArrayList<>();
+
+        for (float i = start.longitude; i <= end.longitude; i += yIncrement) {
+            for (float j = start.latitude; j <= end.latitude; j += xIncrement) {
+                buoys.add(new GeoVector(new Point(j, i), (float) rn.nextInt(105 - 33 + 1) + 33, rn.nextInt(360 - 0 + 1) + 0));
+                System.out.println(i + ", " + j);
+            }
+
+        }
+
+        return buoys;
     }
 
 

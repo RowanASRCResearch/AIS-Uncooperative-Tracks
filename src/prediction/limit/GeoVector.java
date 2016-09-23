@@ -11,13 +11,19 @@ public class GeoVector {
 
     public float latComponent;
     public float longComponent;
+    public Point location;
+    public float speed;
+    public float vectorAngle;
 
-    public GeoVector(float latComponent, float longComponent) {
+    public GeoVector(Point location, float latComponent, float longComponent) {
+        this.location = location;
         this.latComponent = latComponent;
         this.longComponent = longComponent;
     }
 
-    public GeoVector(float speed, int vectorAngle) {
+    public GeoVector(Point location, float speed, int vectorAngle) {
+        this.location = location;
+        this.vectorAngle = vectorAngle;
         int count = 0;
         while (vectorAngle > 90) {
             vectorAngle -= 90;
@@ -44,7 +50,7 @@ public class GeoVector {
     }
 
     public GeoVector addVectors(GeoVector vec) {
-        return new GeoVector((latComponent + vec.getLatComponent()), (longComponent + vec.getLongComponent()));
+        return new GeoVector(location, (latComponent + vec.getLatComponent()), (longComponent + vec.getLongComponent()));
     }
 
     public float getMagnitude() {
@@ -61,6 +67,10 @@ public class GeoVector {
 
     public float getLongComponent() {
         return longComponent;
+    }
+
+    public float getSpeed() {
+        return speed;
     }
 
 
