@@ -1,15 +1,10 @@
-package prediction.limit;
+package prediction;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import fasade.AisDatabaseFasade;
 import gathering.wind.RadiusGenerator;
-import gathering.wind.Station;
 import io.KMLBuilder;
-import prediction.Controller;
-import prediction.PathPredictor;
-import prediction.Point;
-import sun.text.resources.cldr.ia.FormatData_ia;
 
 import java.io.File;
 import java.io.FileReader;
@@ -18,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
-import java.util.function.IntBinaryOperator;
 
 /**
  * Created by eliakah on 9/20/16.
@@ -148,13 +142,6 @@ public class AreaGenerator {
         }
 
         return distance;
-    }
-
-    Vector ApplyWeatherData() {
-        Vector newVessel = null; //temporary
-        //determine
-
-        return newVessel;
     }
 
     ArrayList<GeoVector> generateGrid(Point start, Point end) {

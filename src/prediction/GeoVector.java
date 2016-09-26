@@ -1,8 +1,6 @@
-package prediction.limit;
+package prediction;
 
 //import prediction.Point;
-
-import prediction.Point;
 
 /**
  * Created by nick Laposta on 8/23/2016, Modified by Sean Dale on 9/22/2016.
