@@ -159,6 +159,5 @@ public class ApiFascade {
     private String getDate() {
         String timeStamp = new SimpleDateFormat("yyyyMMdd%20HH").format(new java.util.Date());
         return timeStamp;
-
     }
 }
