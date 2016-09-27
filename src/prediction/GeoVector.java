@@ -11,7 +11,7 @@ public class GeoVector {
     public float longComponent;
     public Point location;
     public float speed;
-    public float vectorAngle;
+    public float vectorAngle = -1;
 
     public GeoVector(Point location, float latComponent, float longComponent) {
         this.location = location;
@@ -56,7 +56,16 @@ public class GeoVector {
     }
 
     public float getAngle() {
-        return (float) Math.toDegrees(Math.atan(longComponent / latComponent));
+        if(vectorAngle < 0 )
+            return (float) Math.toDegrees(Math.atan(longComponent / latComponent));
+        else
+            return  vectorAngle;
+
+    }
+
+
+    public void setLocalAngle(float angle){
+         vectorAngle = angle;
     }
 
     public float getLatComponent() {

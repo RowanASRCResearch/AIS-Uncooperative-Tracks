@@ -46,19 +46,38 @@ public class Main {
         AreaGenerator gen = new AreaGenerator(vessel, travelTime, vesselTurnRate);
         ArrayList<GeoVector> buoys = gen.generateGrid(new Point(35, 15), new Point(37, 17));
 
-        ArrayList<Point> result = gen.execute(buoys);
+        //from left to middle
+        GeoVector vesselHolder = vessel;
+        ArrayList<ArrayList<Point>> results = new ArrayList<>(); //= gen.execute(buoys);
+        float bound = gen.getLeftRightBounds(true);
+        float angleCap = vessel.getAngle();
+        for (float i = bound; i <= angleCap ; i++) {
+            vessel = new GeoVector(vessel.location, vesselSpeed,i );
+            gen = new AreaGenerator(vessel, travelTime, vesselTurnRate);
+            results.add(gen.execute(buoys));
+        }
 
+        //from middle to right
+        vessel = vesselHolder;
+         bound = gen.getLeftRightBounds(false);
+        angleCap = vessel.getAngle();
+        for (float i = angleCap ; i <=bound  ; i++) {
+            vessel = new GeoVector(vessel.location, vesselSpeed,i );
+            gen = new AreaGenerator(vessel, travelTime, vesselTurnRate);
+            results.add(gen.execute(buoys));
+        }
 
         //create the kml
 
         //KMLBuilder builder = new KMLBuilder("testKML", "test for the path in a certain direction ");
 
         KMLBuilder builder = new KMLBuilder();
-        String tag = builder.path(result, "path");
-        builder.createFile(tag);
-        for (int i = 0; i < result.size(); i++) {
-            System.out.println(result.get(i).latitude + ", " + result.get(i).longitude);
+        String tag ="";
+        for (int i = 0; i <results.size() ; i++) {
+            tag +="\n"+builder.path(results.get(i), "path");
         }
+
+        builder.createFile(tag);
 
     }
 
