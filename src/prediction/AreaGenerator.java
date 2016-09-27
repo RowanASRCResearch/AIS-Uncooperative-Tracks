@@ -24,11 +24,13 @@ public class AreaGenerator {
 
     private static GeoVector vessel;
     private static int travelTime;
+    private float vesselTurnRate = 5f;//vesselTurnRate is set to 5 degrees.
 
 
-    public AreaGenerator(GeoVector vessel, int travelTime) {
+    public AreaGenerator(GeoVector vessel, int travelTime, float vesselTurnRate) {
         this.vessel = vessel;
         this.travelTime = travelTime;
+        this.vesselTurnRate = vesselTurnRate;
     }
 
 
@@ -108,6 +110,26 @@ public class AreaGenerator {
         }
 
         return buoys;
+    }
+
+    public float getLeftRightBounds(boolean isLeft)
+    {
+        float amountTurned = vesselTurnRate * travelTime;
+        float bound;
+        if(isLeft)
+        {
+            bound = vessel.getAngle()-amountTurned;
+        }
+        else {
+            bound = vessel.getAngle() + amountTurned;
+        }
+
+        if(bound > 360f)
+            bound = bound - 360f;
+        else if(bound < 0f)
+            bound = bound + 360f;
+
+        return bound;
     }
 
 

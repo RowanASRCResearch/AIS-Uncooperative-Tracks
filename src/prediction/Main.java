@@ -43,7 +43,7 @@ public class Main {
 
         //creating vessel vector
         GeoVector vessel = new GeoVector(initialCoordinates, vesselSpeed, (int) vesselCourse);
-        AreaGenerator gen = new AreaGenerator(vessel, travelTime);
+        AreaGenerator gen = new AreaGenerator(vessel, travelTime, vesselTurnRate);
         ArrayList<GeoVector> buoys = gen.generateGrid(new Point(35, 15), new Point(37, 17));
 
         ArrayList<Point> result = gen.execute(buoys);
