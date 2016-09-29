@@ -169,7 +169,7 @@ public class KMLBuilder {
      * @return File name as a string.
      */
     public String getFileName() {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(new java.util.Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
         timeStamp += ".kml";
         return timeStamp;
     }

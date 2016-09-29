@@ -42,6 +42,16 @@ public class Point {
     }
 
     /**
+     * Returns the slope between two points
+     *
+     * @param Point    the other point to compare
+     */
+    public float getSlope(Point other)
+    {
+        return ((other.getLongitude()-longitude)/(other.getLatitude()-latitude));
+    }
+
+    /**
      * Gets latitude.
      *
      * @return the latitude

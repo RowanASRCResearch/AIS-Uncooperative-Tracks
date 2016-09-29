@@ -30,6 +30,11 @@ public class PathPredictor {
         this.vesselCourse = vesselCourse;
     }
 
+    public PathPredictor()
+    {
+
+    }
+
 
     public static void main(String args[]) {
 

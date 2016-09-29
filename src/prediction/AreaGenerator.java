@@ -33,8 +33,6 @@ public class AreaGenerator {
         this.vesselTurnRate = vesselTurnRate;
     }
 
-
-
     static ArrayList<Point> execute(ArrayList<GeoVector> buoys) {
         ArrayList<Point> path = new ArrayList<>();
         RadiusGenerator g;
@@ -103,7 +101,8 @@ public class AreaGenerator {
 
         for (float i = start.longitude; i <= end.longitude; i += yIncrement) {
             for (float j = start.latitude; j <= end.latitude; j += xIncrement) {
-                buoys.add(new GeoVector(new Point(j, i), (float) rn.nextInt(105 - 33 + 1) + 33, rn.nextInt(360 - 0 + 1) + 0));
+                int angle = rn.nextInt(360 - 0 + 1) + 0;
+                buoys.add(new GeoVector(new Point(j, i), (float) rn.nextInt(40 - 10 + 1) + 10, angle));
                 System.out.println(i + ", " + j);
             }
 
@@ -112,6 +111,10 @@ public class AreaGenerator {
         return buoys;
     }
 
+    /*
+    * This method will return either the left or right bound of the vessel based upon turning speed.
+    * @param isLeft -> if true, returns left bound, else returns right bound.
+     */
     public float getLeftRightBounds(boolean isLeft)
     {
         float amountTurned = vesselTurnRate * travelTime;
