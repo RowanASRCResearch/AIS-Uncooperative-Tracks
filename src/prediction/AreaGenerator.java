@@ -38,13 +38,13 @@ public class AreaGenerator {
         RadiusGenerator g;
         Point currentLoc;
 
-        PathPredictor predictor = new PathPredictor(vessel.location, vessel.getAngle(), vessel.getSpeed());
+       // PathPredictor predictor = new PathPredictor(vessel.location, vessel.getAngle(), vessel.getSpeed());
         path.add(new Point(vessel.location.latitude, vessel.location.longitude));
         for (int i = 0; i < travelTime; i++) {
 
-            currentLoc = predictor.execute();
-            path.add(currentLoc);
-            vessel.location = currentLoc;
+            //currentLoc = predictor.execute();
+           // path.add(currentLoc);
+            //vessel.location = currentLoc;
             g = new RadiusGenerator(vessel.location.getLatitude(), vessel.location.getLongitude(), 30, 10);
             ArrayList<GeoVector> v = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class AreaGenerator {
             v = rankStations(vessel.location, v);
             vessel = vessel.addVectors(v.get(0));
 
-            predictor = new PathPredictor(vessel.location, vessel.getAngle(), vessel.getMagnitude());
+           // predictor = new PathPredictor(vessel.location, vessel.getAngle(), vessel.getMagnitude());
         }
 
         return path;
@@ -110,30 +110,4 @@ public class AreaGenerator {
 
         return buoys;
     }
-
-    /*
-    * This method will return either the left or right bound of the vessel based upon turning speed.
-    * @param isLeft -> if true, returns left bound, else returns right bound.
-     */
-    public float getLeftRightBounds(boolean isLeft)
-    {
-        float amountTurned = vesselTurnRate * travelTime;
-        float bound;
-        if(isLeft)
-        {
-            bound = vessel.getAngle()-amountTurned;
-        }
-        else {
-            bound = vessel.getAngle() + amountTurned;
-        }
-
-        if(bound > 360f)
-            bound = bound - 360f;
-        else if(bound < 0f)
-            bound = bound + 360f;
-
-        return bound;
-    }
-
-
 }

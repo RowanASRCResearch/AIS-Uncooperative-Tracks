@@ -11,74 +11,42 @@ import java.util.Collections;
  */
 public class PathPredictor {
 
-    private Point initialCoordinates; //starting point
-    private float vesselSpeed; //vessel speed
-    private float vesselCourse; //vessel orientation , in degrees
-    private float vesselTurnRate = 5f;//vesselTurnRate is set to 5 degrees.
-
-
-    /**
-     *
-     * @param initialCoordinates
-     * @param vesselCourse
-     * @param vesselSpeed
-     */
-
-    public PathPredictor(Point initialCoordinates, float vesselCourse, float vesselSpeed) {
-        this.initialCoordinates = initialCoordinates;
-        this.vesselSpeed = vesselSpeed;
-        this.vesselCourse = vesselCourse;
-    }
-
     public PathPredictor()
     {
 
     }
 
 
-    public static void main(String args[]) {
-
-        PathPredictor p = new PathPredictor(new Point(0, 0), 225, 15);
-        System.out.println(p.execute().latitude + ", " + p.execute().longitude);
-
-    }
-
-
-    /**
-     * Execute the predictive algorithm.
-     *
-     * @return the boolean flag
-     */
-    public Point execute() {
-
-        Point destination;
-        Float distance = getDistanceByMinute(vesselSpeed); //gets distance after one minute
-        destination = calculateCoordinates(initialCoordinates.latitude,
-                initialCoordinates.longitude, vesselCourse, distance);//gets destiniation coor based on distance and angle
-
-        return destination;
-
-    }
-
-
-
     /**
      * Calculates the distance traveled (in kilometers)
      * in 1 minute
      *
-     * @param knots Speed the vessel in travels (in knots).
+     * @param speed Speed the vessel in travels (in km/s).
      * @return the distance
      */
-    public float getDistanceByMinute(float knots) {
-
-        //Converts given knots to kilometers per second.
-        float knotsToKps = (knots * 0.000514444f);
+    public float getDistanceByMinute(float speed) {
 
         //1 minute
         float timeToSeconds = 60;
 
         //The distance traveled by the vessel, in meters.
-        return (knotsToKps * timeToSeconds);
+        return (speed * timeToSeconds);
+    }
+
+    /**
+     *
+     */
+    public ArrayList<Point> getPath(Point location, float speed, float angle, float timeInMinutes)
+    {
+        ArrayList<Point> result = new ArrayList<Point>();
+        float distancePerMin = getDistanceByMinute(speed);
+        Point pointHolder = location;
+        for (int i = 0; i < timeInMinutes; i++) {
+            result.add(pointHolder);
+            pointHolder = calculateCoordinates(pointHolder.latitude, pointHolder.longitude, angle, distancePerMin);
+        }
+
+        return result;
     }
 
 

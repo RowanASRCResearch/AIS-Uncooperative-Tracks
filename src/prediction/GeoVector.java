@@ -17,6 +17,8 @@ public class GeoVector {
         this.location = location;
         this.latComponent = latComponent;
         this.longComponent = longComponent;
+        this.speed = getMagnitude();
+        this.vectorAngle = getAngle();
     }
 
     public GeoVector(Point location, float speed, int vectorAngle) {
@@ -45,6 +47,8 @@ public class GeoVector {
         }
         this.latComponent = y;
         this.longComponent = x;
+        this.speed = speed;
+        this.vectorAngle = vectorAngle;
     }
 
     public GeoVector addVectors(GeoVector vec) {
