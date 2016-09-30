@@ -1,6 +1,7 @@
 package prediction;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * TODO: create enhenritence structure with a 'predictor' parent
@@ -36,16 +37,35 @@ public class PathPredictor {
     /**
      *
      */
-    public ArrayList<Point> getPath(Point location, float speed, float angle, float timeInMinutes)
+    public ArrayList<Point> getPath(Point location, float speed, float angle, float timeInMinutes, ArrayList<GeoVector> bouys)
     {
         ArrayList<Point> result = new ArrayList<Point>();
         float distancePerMin = getDistanceByMinute(speed);
         Point pointHolder = location;
-        for (int i = 0; i < timeInMinutes; i++) {
-            result.add(pointHolder);
-            pointHolder = calculateCoordinates(pointHolder.latitude, pointHolder.longitude, angle, distancePerMin);
+        if(bouys.size() == 0) {
+            for (int i = 0; i < timeInMinutes; i++) {
+                result.add(pointHolder);
+                pointHolder = calculateCoordinates(pointHolder.latitude, pointHolder.longitude, angle, distancePerMin);
+            }
         }
+        else{
+            GeoVector vessel = new GeoVector(location, speed, angle);
+            result.add(pointHolder);
+            for (int i = 0; i < timeInMinutes; i++) {
+                bouys = rankStations(vessel.location, bouys);
+                GeoVector temp = bouys.get(0);
+                //System.out.println("Temp: speed: " + temp.getSpeed() + " angle: " + temp.getAngle());
+                //System.out.println("VesselBefore: speed: " + vessel.getSpeed() + " angle: " + vessel.getAngle());
 
+                temp.speed = temp.speed/10000;
+                vessel = vessel.addVectors(temp);
+                //System.out.println("VesselAfter: speed: " + vessel.getSpeed() + " angle: " + vessel.getAngle());
+
+                distancePerMin = getDistanceByMinute(vessel.getSpeed());
+                pointHolder = calculateCoordinates(pointHolder.latitude, pointHolder.longitude, vessel.getAngle(), distancePerMin);
+                result.add(pointHolder);
+            }
+        }
         return result;
     }
 
@@ -78,5 +98,30 @@ public class PathPredictor {
         lon2 = (float) Math.toDegrees(lon2);
 
         return (new Point(lat2, lon2));
+    }
+
+    public static ArrayList<GeoVector> rankStations(Point origin, ArrayList<GeoVector> vectors) {
+        Comparator<GeoVector> comp = new Comparator<GeoVector>() {
+            @Override
+            public int compare(GeoVector s1, GeoVector s2) {
+                if (getDistance(s1.location, origin) < getDistance(s2.location, origin)) {
+                    return 1;
+                } else return -1;
+            }
+        };
+
+        Collections.sort(vectors, comp);
+
+
+        return vectors;
+    }
+
+    private static int getDistance(Point start, Point end) {
+        int distance = (int) Math.sqrt((int) (end.latitude - start.latitude) ^ 2 + (int) (end.longitude - start.longitude) ^ 2);
+        if (distance < 0) {
+            distance *= -1;
+        }
+
+        return distance;
     }
 }

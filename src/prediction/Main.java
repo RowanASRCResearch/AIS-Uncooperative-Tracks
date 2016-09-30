@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by lapost48 on 7/14/2016.
@@ -47,7 +48,7 @@ public class Main {
         Point initialCoordinates = new Point(database.getLastLocation(mmsi)[0], database.getLastLocation(mmsi)[1]);
         float vesselSpeed = database.getLastSpeed(mmsi);
         vesselSpeed = vesselSpeed * 0.000514444f;
-        System.out.print("vessel speed" + vesselSpeed);
+        System.out.print("vessel speed Original " + vesselSpeed);
         float vesselCourse = database.getLastCourse(mmsi);
         vesselSize(mmsi);
 
@@ -56,8 +57,19 @@ public class Main {
         String tag;
         PathPredictor path = new PathPredictor();
 
+        AreaGenerator gen = new AreaGenerator(vessel, travelTime, vesselTurnRate);
+        ArrayList<GeoVector> buoys = gen.generateGrid(new Point(35, 15), new Point(37, 17));
+
         //System.out.println("Location: " + vessel.location + " speed: " + vessel.speed + " angle: " + vessel.getAngle() + " travelTime: " + travelTime);
         //results = path.getPath(vessel.location, vessel.getSpeed(), vessel.getAngle(), travelTime);
+/*
+        Point origin = new Point(0,0);
+        GeoVector temp1 = new GeoVector(origin, 10.0f, 20.0f);
+        GeoVector temp2 = new GeoVector(origin, -1.0f, 5.0f);
+        GeoVector r1 = temp1.addVectors(temp2);
+        System.out.println("\nResult: " +  r1.getSpeed()+","+r1.getAngle()+","+r1.getLatComponent()+","+r1.getLongComponent());
+
+*/
 
         //from left to right bounds
         GeoVector vesselHolder = vessel;
@@ -67,8 +79,15 @@ public class Main {
         Point currentLoc;
         for (float i = leftBound; i <= rightBound; i++) {
             vesselHolder.vectorAngle = i;
-            results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime));
+            ArrayList<GeoVector> bouys = generateGrid(new Point(35, 15), new Point(37, 17));
+            //ArrayList<GeoVector> bouys = new ArrayList<GeoVector>();
+
+            results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, bouys));
         }
+
+
+
+
 
         //create the kml
         builder = new KMLBuilder();
@@ -126,5 +145,22 @@ public class Main {
             bound = bound + 360f;
 
         return bound;
+    }
+
+    static ArrayList<GeoVector> generateGrid(Point start, Point end) {
+        Random rn = new Random();
+        float xIncrement = (end.latitude - start.latitude) / 12;
+        float yIncrement = (end.longitude - start.longitude) / 12;
+        ArrayList<GeoVector> buoys = new ArrayList<>();
+
+        for (float i = start.longitude; i <= end.longitude; i += yIncrement) {
+            int angle = rn.nextInt(360 - 0 + 1) + 0;
+            for (float j = start.latitude; j <= end.latitude; j += xIncrement) {
+                buoys.add(new GeoVector(new Point(j, i), (float) rn.nextInt(4 - 1 + 1) + 1, angle));
+                //System.out.println(i + ", " + j);
+            }
+        }
+
+        return buoys;
     }
 }

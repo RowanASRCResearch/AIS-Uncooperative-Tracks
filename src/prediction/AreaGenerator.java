@@ -23,11 +23,11 @@ public class AreaGenerator {
 
 
     private static GeoVector vessel;
-    private static int travelTime;
+    private static float travelTime;
     private float vesselTurnRate = 5f;//vesselTurnRate is set to 5 degrees.
 
 
-    public AreaGenerator(GeoVector vessel, int travelTime, float vesselTurnRate) {
+    public AreaGenerator(GeoVector vessel, float travelTime, float vesselTurnRate) {
         this.vessel = vessel;
         this.travelTime = travelTime;
         this.vesselTurnRate = vesselTurnRate;
@@ -38,6 +38,8 @@ public class AreaGenerator {
         RadiusGenerator g;
         Point currentLoc;
 
+        PathPredictor predictor = new PathPredictor();
+       //ArrayList<Point> currPath = predictor.getPath(vessel.location, vessel.getSpeed(), vessel.getAngle(), travelTime);
        // PathPredictor predictor = new PathPredictor(vessel.location, vessel.getAngle(), vessel.getSpeed());
         path.add(new Point(vessel.location.latitude, vessel.location.longitude));
         for (int i = 0; i < travelTime; i++) {
@@ -45,6 +47,11 @@ public class AreaGenerator {
             //currentLoc = predictor.execute();
            // path.add(currentLoc);
             //vessel.location = currentLoc;
+
+            //currentLoc = currPath.get(i);
+            //path.add(currentLoc);
+            //vessel.location = currentLoc;
+
             g = new RadiusGenerator(vessel.location.getLatitude(), vessel.location.getLongitude(), 30, 10);
             ArrayList<GeoVector> v = new ArrayList<>();
 
@@ -56,6 +63,7 @@ public class AreaGenerator {
             v = rankStations(vessel.location, v);
             vessel = vessel.addVectors(v.get(0));
 
+            //currPath = predictor.getPath(vessel.location, vessel.getSpeed(), vessel.getAngle(), travelTime);
            // predictor = new PathPredictor(vessel.location, vessel.getAngle(), vessel.getMagnitude());
         }
 
@@ -102,8 +110,8 @@ public class AreaGenerator {
         for (float i = start.longitude; i <= end.longitude; i += yIncrement) {
             for (float j = start.latitude; j <= end.latitude; j += xIncrement) {
                 int angle = rn.nextInt(360 - 0 + 1) + 0;
-                buoys.add(new GeoVector(new Point(j, i), (float) rn.nextInt(40 - 10 + 1) + 10, angle));
-                System.out.println(i + ", " + j);
+                buoys.add(new GeoVector(new Point(j, i), (float) rn.nextInt(5 - 1 + 1) + 1, angle));
+                //System.out.println(i + ", " + j);
             }
 
         }
