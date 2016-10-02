@@ -32,7 +32,7 @@ public abstract class DatabaseFasade {
 
     protected void openConnection() {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName + "?useSSL=false", user, password);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName + "?useSSL=false", "root", "");
         } catch(SQLException e) {
             System.err.println("Error connecting to database!");
             System.err.println(e.getMessage());

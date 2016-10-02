@@ -47,8 +47,9 @@ public class Main {
         //store info pulled
         Point initialCoordinates = new Point(database.getLastLocation(mmsi)[0], database.getLastLocation(mmsi)[1]);
         float vesselSpeed = database.getLastSpeed(mmsi);
-        vesselSpeed = vesselSpeed * 0.000514444f;
-        System.out.print("vessel speed Original " + vesselSpeed);
+        vesselSpeed = ((vesselSpeed * 1.8519999985024f)/60)/60; //knots to km per sec
+        System.out.println("vessel speed Original " + vesselSpeed);
+        System.out.println("vessel traveltime Original " + travelTime);
         float vesselCourse = database.getLastCourse(mmsi);
         vesselSize(mmsi);
 
@@ -57,34 +58,42 @@ public class Main {
         String tag;
         PathPredictor path = new PathPredictor();
 
-        AreaGenerator gen = new AreaGenerator(vessel, travelTime, vesselTurnRate);
-        ArrayList<GeoVector> buoys = gen.generateGrid(new Point(35, 15), new Point(37, 17));
-
-        //System.out.println("Location: " + vessel.location + " speed: " + vessel.speed + " angle: " + vessel.getAngle() + " travelTime: " + travelTime);
-        //results = path.getPath(vessel.location, vessel.getSpeed(), vessel.getAngle(), travelTime);
-/*
-        Point origin = new Point(0,0);
-        GeoVector temp1 = new GeoVector(origin, 10.0f, 20.0f);
-        GeoVector temp2 = new GeoVector(origin, -1.0f, 5.0f);
-        GeoVector r1 = temp1.addVectors(temp2);
-        System.out.println("\nResult: " +  r1.getSpeed()+","+r1.getAngle()+","+r1.getLatComponent()+","+r1.getLongComponent());
-
-*/
+        //AreaGenerator gen = new AreaGenerator(vessel, travelTime, vesselTurnRate);
+        //ArrayList<GeoVector> buoys = generateGrid(new Point(35, 15), new Point(37, 17));
+        ArrayList<GeoVector> buoys = new ArrayList<>();
 
         //from left to right bounds
         GeoVector vesselHolder = vessel;
         ArrayList<ArrayList<Point>> results = new ArrayList<>(); //= gen.execute(buoys);
         float leftBound = getLeftRightBounds(true, vesselHolder);
         float rightBound = getLeftRightBounds(false, vesselHolder);
+        System.out.println("right " + rightBound);
+        System.out.println("left " + leftBound);
         Point currentLoc;
-        for (float i = leftBound; i <= rightBound; i++) {
-            vesselHolder.vectorAngle = i;
-            ArrayList<GeoVector> bouys = generateGrid(new Point(35, 15), new Point(37, 17));
-            //ArrayList<GeoVector> bouys = new ArrayList<GeoVector>();
+        if(leftBound > rightBound) {
+            for (float i = leftBound; i <= 360; i++) {
+                vesselHolder.vectorAngle = i;
+                vessel.speed = vesselSpeed;
+                results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, buoys));
+                System.out.println(i);
+            }
 
-            results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, bouys));
+            for (float i = 0; i <= rightBound; i++) {
+                vesselHolder.vectorAngle = i;
+                vessel.speed = vesselSpeed;
+                results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, buoys));
+                System.out.println(i);
+            }
+
+        }else {
+
+            for (float i = leftBound; i <= rightBound; i++) {
+                vesselHolder.vectorAngle = i;
+                vessel.speed = vesselSpeed;
+                results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, buoys));
+                System.out.println(i);
+            }
         }
-
 
 
 
@@ -131,19 +140,24 @@ public class Main {
     {
         float amountTurned = vesselTurnRate * travelTime;
         float bound;
-        if(isLeft)
-        {
-            bound = vessel.getAngle()-amountTurned;
-        }
-        else {
-            bound = vessel.getAngle() + amountTurned;
+        if(amountTurned >= 90){
+            bound = 90;
+        }else {
+
+            if (isLeft) {
+                bound = vessel.getAngle() - amountTurned;
+            } else {
+                bound = vessel.getAngle() + amountTurned;
+            }
+
+            if (bound > 360f)
+                bound = bound - 360f;
+            else if (bound < 0f)
+                bound = bound + 360f;
         }
 
-        if(bound > 360f)
-            bound = bound - 360f;
-        else if(bound < 0f)
-            bound = bound + 360f;
-
+        System.out.println("vessel angle "+vessel.getAngle());
+        System.out.println("amount turned: " + amountTurned);
         return bound;
     }
 
@@ -156,7 +170,7 @@ public class Main {
         for (float i = start.longitude; i <= end.longitude; i += yIncrement) {
             int angle = rn.nextInt(360 - 0 + 1) + 0;
             for (float j = start.latitude; j <= end.latitude; j += xIncrement) {
-                buoys.add(new GeoVector(new Point(j, i), (float) rn.nextInt(4 - 1 + 1) + 1, angle));
+                buoys.add(new GeoVector(new Point(j, i), (float) (((((i + 1)* 1.8519999985024f)/60)/60) / 100), angle));
                 //System.out.println(i + ", " + j);
             }
         }

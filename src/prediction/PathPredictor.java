@@ -39,16 +39,19 @@ public class PathPredictor {
      */
     public ArrayList<Point> getPath(Point location, float speed, float angle, float timeInMinutes, ArrayList<GeoVector> bouys)
     {
+        System.out.println("get path");
         ArrayList<Point> result = new ArrayList<Point>();
         float distancePerMin = getDistanceByMinute(speed);
         Point pointHolder = location;
         if(bouys.size() == 0) {
+            System.out.println("list empty");
             for (int i = 0; i < timeInMinutes; i++) {
                 result.add(pointHolder);
                 pointHolder = calculateCoordinates(pointHolder.latitude, pointHolder.longitude, angle, distancePerMin);
             }
         }
         else{
+            System.out.println("list full");
             GeoVector vessel = new GeoVector(location, speed, angle);
             result.add(pointHolder);
             for (int i = 0; i < timeInMinutes; i++) {
@@ -57,11 +60,13 @@ public class PathPredictor {
                 //System.out.println("Temp: speed: " + temp.getSpeed() + " angle: " + temp.getAngle());
                 //System.out.println("VesselBefore: speed: " + vessel.getSpeed() + " angle: " + vessel.getAngle());
 
-                temp.speed = temp.speed/10000;
+                System.out.println("vessel speed: " + speed);
                 vessel = vessel.addVectors(temp);
                 //System.out.println("VesselAfter: speed: " + vessel.getSpeed() + " angle: " + vessel.getAngle());
 
                 distancePerMin = getDistanceByMinute(vessel.getSpeed());
+                System.out.println("distance per min: " + distancePerMin);
+                System.out.println("time in min: " + timeInMinutes);
                 pointHolder = calculateCoordinates(pointHolder.latitude, pointHolder.longitude, vessel.getAngle(), distancePerMin);
                 result.add(pointHolder);
             }
