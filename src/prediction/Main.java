@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -22,17 +23,13 @@ public class Main {
     public static float travelTime;
 
     public static void main(String args[]) throws IOException {
+        String filePath = "";
+        if(args.length == 3){
+            filePath = args[2];
+        }
         //extract arguments
         String mmsi = args[0];
-        //String date = args[1];
         travelTime = Integer.parseInt(args[1]);
-        //int isOld;
-        /*
-        if(args.length < 4){
-            isOld = 1; }
-        else {
-            //isOld = Integer.parseInt(args[3]); }// 0 is old, 1 is new.
-*/
 
         //use fascade to pull latest vessel info by mmsi
         JsonReader reader;
@@ -115,14 +112,14 @@ public class Main {
         //create the kml
         builder = new KMLBuilder();
         tag = "";
-/*
+
         for (int i = 0; i < results.size(); i++) {
             tag += "\n" + builder.path(results.get(i), "path");
-        }*/
+        }/*
         for (int i = 0; i < polygon.size(); i++) {
             tag += "\n" + builder.polygon(polygon, new ArrayList<Point>(), "Area of prediction");
         }
-
+*/
             //creating vessel vector
             //AreaGenerator gen = new AreaGenerator(vessel, travelTime, vesselTurnRate);
 
@@ -130,6 +127,10 @@ public class Main {
 
 
         builder.createFile(tag);
+
+        for (int i = 0; i <buoys.size() ; i++) {
+            System.out.println(buoys.get(i).location.latitude+","+buoys.get(i).location.longitude+","+buoys.get(i).getMagnitude()+","+buoys.get(i).getAngle());
+        }
 
     }
 
@@ -190,7 +191,7 @@ public class Main {
 
             for (float j = start.latitude; j <= end.latitude; j += xIncrement) {
                 int angle = rn.nextInt(360 - 0 + 1) + 0;
-                int sp = rn.nextInt(63 - 56 + 1) + 56;
+                int sp = rn.nextInt(66 - 56 + 1) + 56;
                 buoys.add(new GeoVector(new Point(j, i), ((sp* 1.8519999985024f)/360)/100, (int)angle)); //knots to km per sec, angle));
                 //System.out.println(i + ", " + j);
             }
