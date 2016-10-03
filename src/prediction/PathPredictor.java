@@ -23,7 +23,7 @@ public class PathPredictor {
      * in 1 minute
      *
      * @param speed Speed the vessel in travels (in km/s).
-     * @return the distance
+     * @return the distance after one minute
      */
     public float getDistanceByMinute(float speed) {
 
@@ -35,46 +35,37 @@ public class PathPredictor {
     }
 
     /**
+     * Creates a single path of prediction based upon the provided Point location, speed, angle, time, and list of buoys.
      *
+     * @param location
+     * @param speed
+     * @param angle
+     * @param timeInMinutes
+     * @param buoys
+     * @return ArrayList<Point> of the path of vessel
      */
-    public ArrayList<Point> getPath(Point location, float speed, float angle, float timeInMinutes, ArrayList<GeoVector> bouys)
+    public ArrayList<Point> getPath(Point location, float speed, float angle, float timeInMinutes, ArrayList<GeoVector> buoys)
     {
-        System.out.println("get path");
+        //System.out.println("get path");
         ArrayList<Point> result = new ArrayList<Point>();
         float distancePerMin = getDistanceByMinute(speed);
         Point pointHolder = location;
-        if(bouys.size() == 0) {
+        if(buoys.size() == 0) { // For calculating a path without considering Wind and Current Vectors
             System.out.println("list empty");
             for (int i = 0; i < timeInMinutes; i++) {
                 result.add(pointHolder);
                 pointHolder = calculateCoordinates(pointHolder.latitude, pointHolder.longitude, angle, distancePerMin);
             }
         }
-        else{
+        else{ // For calculating a path with Wind and Current Vectors
             System.out.println("list full");
             GeoVector vessel = new GeoVector(location, speed, (int)angle);
             result.add(pointHolder);
             for (int i = 0; i < timeInMinutes; i++) {
-                bouys = rankStations(vessel.location, bouys);
-                GeoVector temp = bouys.get(0);
-                System.out.println("before temp speed - test: " + temp.getSpeed());
-                System.out.println("before temp yComp - test: " + temp.getLongComponent());
-                System.out.println("Vbefore temp XComp - test: " + temp.getLatComponent());
-                //System.out.println("Temp: speed: " + temp.getSpeed() + " angle: " + temp.getAngle());
-                //System.out.println("VesselBefore: speed: " + vessel.getSpeed() + " angle: " + vessel.getAngle());
-                System.out.println("before vessel speed - test: " + vessel.getSpeed());
-                System.out.println("before vessel yComp - test: " + vessel.getLongComponent());
-                System.out.println("Vbefore vessel XComp - test: " + vessel.getLatComponent());
-                System.out.println("vessel speed: " + speed);
-                vessel = vessel.addVectors(temp);
-                System.out.println("after vessel speed - test: " + vessel.getSpeed());
-                System.out.println("after vessel yComp - test: " + vessel.getLongComponent());
-                System.out.println("after vessel XComp - test: " + vessel.getLatComponent());
-                //System.out.println("VesselAfter: speed: " + vessel.getSpeed() + " angle: " + vessel.getAngle());
-
+                buoys = rankStations(vessel.location, buoys);
+                GeoVector temp = buoys.get(0);
+                vessel = vessel.addVectors(temp); // Adding the wind and current vectors to the vessel vector
                 distancePerMin = getDistanceByMinute(vessel.getSpeed());
-                System.out.println("distance per min: " + distancePerMin);
-                System.out.println("time in min: " + timeInMinutes);
                 pointHolder = calculateCoordinates(pointHolder.latitude, pointHolder.longitude, vessel.getAngle(), distancePerMin);
                 result.add(pointHolder);
             }
@@ -113,6 +104,13 @@ public class PathPredictor {
         return (new Point(lat2, lon2));
     }
 
+    /**
+     * Compares the distance of the vessel with the buoys, and will sort the list of buoys based on how close they are to the vessel.
+     *
+     * @param origin
+     * @param vectors
+     * @return Sorted ArrayList<GeoVector>
+     */
     public static ArrayList<GeoVector> rankStations(Point origin, ArrayList<GeoVector> vectors) {
         Comparator<GeoVector> comp = new Comparator<GeoVector>() {
             @Override
@@ -129,6 +127,13 @@ public class PathPredictor {
         return vectors;
     }
 
+    /**
+     * Returns the distance between two points
+     *
+     * @param start
+     * @param end
+     * @return int distance
+     */
     private static int getDistance(Point start, Point end) {
         int distance = (int) Math.sqrt((int) (end.latitude - start.latitude) ^ 2 + (int) (end.longitude - start.longitude) ^ 2);
         if (distance < 0) {

@@ -51,14 +51,17 @@ public class GeoVector {
         this.vectorAngle = vectorAngle;
     }
 
+    // Vector Addition
     public GeoVector addVectors(GeoVector vec) {
         return new GeoVector(location, (latComponent + vec.getLatComponent()), (longComponent + vec.getLongComponent()));
     }
 
+    // Gets the magnitude of the vector based upon its x and y components
     public float getMagnitude() {
         return (float) Math.sqrt(Math.pow(latComponent, 2) + Math.pow(longComponent, 2));
     }
 
+    // Returns the angle of the vector based upon either the x and y coordinates, or just the angle if provided
     public float getAngle() {
         if(vectorAngle < 0 )
             return (float) Math.toDegrees(Math.atan(longComponent / latComponent));

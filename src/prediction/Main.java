@@ -26,6 +26,8 @@ public class Main {
     public static void main(String args[]) throws IOException {
         String filePath = "";
         int coverage = 1;
+
+        //extract arguments
         if (args.length >= 3) {
             coverage = Integer.parseInt(args[2]);
 
@@ -35,8 +37,7 @@ public class Main {
             filePath = args[3];
         }
 
-        System.out.println(filePath);
-        //extract arguments
+        //System.out.println(filePath);
         String mmsi = args[0];
         travelTime = Integer.parseInt(args[1]);
 
@@ -72,25 +73,25 @@ public class Main {
 
         //from left to right bounds
         GeoVector vesselHolder = vessel;
-        ArrayList<ArrayList<Point>> results = new ArrayList<>(); //= gen.execute(buoys);
+        ArrayList<ArrayList<Point>> results = new ArrayList<>();
         float leftBound = getLeftRightBounds(true, vesselHolder);
         float rightBound = getLeftRightBounds(false, vesselHolder);
-        System.out.println("right " + rightBound);
-        System.out.println("left " + leftBound);
-        Point currentLoc;
+        //System.out.println("right " + rightBound);
+        //System.out.println("left " + leftBound);
+
         if (leftBound > rightBound) {
             for (float i = leftBound; i <= 360; i++) {
                 vesselHolder.vectorAngle = i;
                 vessel.speed = vesselSpeed;
                 results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, buoys));
-                System.out.println(i);
+                //System.out.println(i);
             }
 
             for (float i = 1; i <= rightBound; i++) {
                 vesselHolder.vectorAngle = i;
                 vessel.speed = vesselSpeed;
                 results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, buoys));
-                System.out.println(i);
+                //System.out.println(i);
             }
 
         } else {
@@ -99,7 +100,7 @@ public class Main {
                 vesselHolder.vectorAngle = i;
                 vessel.speed = vesselSpeed;
                 results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, buoys));
-                System.out.println(i);
+                //System.out.println(i);
             }
         }
 
@@ -118,22 +119,17 @@ public class Main {
         //create the kml
         builder = new KMLBuilder();
         tag = "";
-if(coverage == 1){
-        tag = builder.placemark(initialCoordinates,"Point of Origin", "Loss of Signal" );
-        for (int i = 0; i < results.size(); i++) {
-            tag += "\n" + builder.path(results.get(i), "path");
-        }
-    }else{
+        if(coverage == 1){ // Produce Paths
+             tag = builder.placemark(initialCoordinates,"Point of Origin", "Loss of Signal" );
+             for (int i = 0; i < results.size(); i++) {
+                tag += "\n" + builder.path(results.get(i), "path");
+                }
+        }else{ // Produce Polygon
             tag = builder.placemark(initialCoordinates,"Point of Origin", "Loss of Signal" );
             for (int i = 0; i < polygon.size(); i++) {
                 tag += "\n" + builder.polygon(polygon, new ArrayList<Point>(), "Area of prediction");
             }
         }
-            //creating vessel vector
-            //AreaGenerator gen = new AreaGenerator(vessel, travelTime, vesselTurnRate);
-
-           // ArrayList<GeoVector> buoys = gen.generateGrid(new Point(35, 15), new Point(37, 17));
-
 
         builder.createFile(tag);
 
@@ -158,7 +154,6 @@ if(coverage == 1){
      *
      * @param mmsi the targeted vessel's MMSI number
      */
-
     private static void vesselSize(String mmsi) {
         //if the total length of the vessel is greater than or equal to 100 meters
         if (database.getVesselSize(mmsi) >= 100) {
@@ -168,7 +163,7 @@ if(coverage == 1){
         vesselTurnRate = 5f;
     }
 
-    /*
+    /**
     * This method will return either the left or right bound of the vessel based upon turning speed.
     * @param isLeft -> if true, returns left bound, else returns right bound.
      */
@@ -197,6 +192,12 @@ if(coverage == 1){
         return bound;
     }
 
+    /**
+     * This method will generate the random angles and speeds for the buoys based around the start and end point provided
+     * @param start
+     * @param end
+     * @return List of GeoVector buoys
+     */
     static ArrayList<GeoVector> generateGrid(Point start, Point end) {
         Random rn = new Random();
         float xIncrement = (end.latitude - start.latitude) / 12;
@@ -217,6 +218,11 @@ if(coverage == 1){
         return buoys;
     }
 
+    /**
+     * Reads from a file of a list of Buoys to generate a previous run of the algorithm in KML format
+     * @param fileName
+     * @return List of GeoVectors to form points from a previous run
+     */
     static ArrayList<GeoVector> generateBuoys(String fileName)
     {
         ArrayList<GeoVector> bouys = new ArrayList<GeoVector>();
