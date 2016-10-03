@@ -6,6 +6,7 @@ import fasade.AisDatabaseFasade;
 import io.KMLBuilder;
 
 import java.awt.geom.Area;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -132,6 +133,14 @@ public class Main {
             System.out.println(buoys.get(i).location.latitude+","+buoys.get(i).location.longitude+","+buoys.get(i).getMagnitude()+","+buoys.get(i).getAngle());
         }
 
+        ArrayList<GeoVector> tempList = generateBuoys(filePath);
+        for (int i = 0; i < tempList.size(); i++) {
+            GeoVector temp = tempList.get(i);
+            System.out.println(temp.getSpeed() + "," + temp.getAngle());
+        }
+        System.out.println("LAST ELEMENT OF TEMPLIST: " + tempList.get(tempList.size()-1));
+
+
     }
 
 
@@ -198,5 +207,30 @@ public class Main {
         }
 
         return buoys;
+    }
+
+    static ArrayList<GeoVector> generateBuoys(String fileName)
+    {
+        ArrayList<GeoVector> bouys = new ArrayList<GeoVector>();
+        String thisLine;
+        String result = "";
+        String[] points;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            while ((thisLine = br.readLine()) != null) {
+                //System.out.println(thisLine);
+                result = thisLine;
+                points = result.split(",");
+                GeoVector temp = new GeoVector(new Point(Float.parseFloat(points[0]), Float.parseFloat(points[1])),
+                        Float.parseFloat(points[2]), (int)Float.parseFloat(points[3]));
+                bouys.add(temp);
+            }
+            br.close();
+
+        } catch(Exception e) {
+            e.printStackTrace();
+
+        }
+        return bouys;
     }
 }
