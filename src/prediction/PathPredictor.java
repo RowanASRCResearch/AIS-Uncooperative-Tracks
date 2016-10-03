@@ -52,16 +52,24 @@ public class PathPredictor {
         }
         else{
             System.out.println("list full");
-            GeoVector vessel = new GeoVector(location, speed, angle);
+            GeoVector vessel = new GeoVector(location, speed, (int)angle);
             result.add(pointHolder);
             for (int i = 0; i < timeInMinutes; i++) {
                 bouys = rankStations(vessel.location, bouys);
                 GeoVector temp = bouys.get(0);
+                System.out.println("before temp speed - test: " + temp.getSpeed());
+                System.out.println("before temp yComp - test: " + temp.getLongComponent());
+                System.out.println("Vbefore temp XComp - test: " + temp.getLatComponent());
                 //System.out.println("Temp: speed: " + temp.getSpeed() + " angle: " + temp.getAngle());
                 //System.out.println("VesselBefore: speed: " + vessel.getSpeed() + " angle: " + vessel.getAngle());
-
+                System.out.println("before vessel speed - test: " + vessel.getSpeed());
+                System.out.println("before vessel yComp - test: " + vessel.getLongComponent());
+                System.out.println("Vbefore vessel XComp - test: " + vessel.getLatComponent());
                 System.out.println("vessel speed: " + speed);
                 vessel = vessel.addVectors(temp);
+                System.out.println("after vessel speed - test: " + vessel.getSpeed());
+                System.out.println("after vessel yComp - test: " + vessel.getLongComponent());
+                System.out.println("after vessel XComp - test: " + vessel.getLatComponent());
                 //System.out.println("VesselAfter: speed: " + vessel.getSpeed() + " angle: " + vessel.getAngle());
 
                 distancePerMin = getDistanceByMinute(vessel.getSpeed());
