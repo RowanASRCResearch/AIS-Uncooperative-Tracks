@@ -3,6 +3,7 @@ package prediction;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import fasade.AisDatabaseFasade;
+import gathering.wind.RadiusGenerator;
 import io.KMLBuilder;
 
 import java.awt.geom.Area;
@@ -17,6 +18,7 @@ import java.util.Random;
 
 /**
  * Created by lapost48 on 7/14/2016.
+ * Modified by Eliakah Kakou & Sean Dale.
  */
 public class Main {
     private static float vesselTurnRate;
@@ -129,6 +131,12 @@ public class Main {
             for (int i = 0; i < polygon.size(); i++) {
                 tag += "\n" + builder.polygon(polygon, new ArrayList<Point>(), "Area of prediction");
             }
+        }
+
+        //add ports to kml
+        ArrayList<Port> ports = generatePorts(initialCoordinates, 50f);
+        for (int i = 0; i <ports.size() ; i++) {
+            tag+= builder.placemark(new Point(ports.get(i).getLat(), ports.get(i).getLon()), ports.get(i).getName(), ports.get(i).getCountry());
         }
 
         builder.createFile(tag);
@@ -246,5 +254,27 @@ public class Main {
 
         }
         return bouys;
+    }
+
+   static  ArrayList<Port> generatePorts(Point point, float radius){
+        ArrayList<Port> ports = new ArrayList<>();
+        JsonReader reader;
+        try {
+            reader = new JsonReader(new FileReader(new File("src/fasade/JSONTEST.json")));
+            database = new Gson().fromJson(reader, AisDatabaseFasade.class);
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("File Not Found!");
+        }
+
+        ArrayList<Port> temp = database.getPorts();
+        RadiusGenerator g = new RadiusGenerator(point.latitude, point.longitude, 30, radius);
+        for (int i = 0; i <temp.size() ; i++) {
+            if(g.contains(g.points, new Point(temp.get(i).getLat(), temp.get(i).getLon())))
+                ports.add(temp.get(i));
+        }
+
+
+        return ports;
     }
 }
