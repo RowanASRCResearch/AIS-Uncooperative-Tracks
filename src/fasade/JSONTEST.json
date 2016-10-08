@@ -4,7 +4,8 @@
   "tableNames":[
     "Vessel_Data",
     "KML_Data",
-    "stations"
+    "stations",
+    "ports"
   ],
   "columnNames":
   {

@@ -3,6 +3,7 @@ package fasade;
 import gathering.wind.Station;
 import org.apache.commons.csv.CSVRecord;
 import prediction.Point;
+import prediction.Port;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -227,13 +228,13 @@ public class AisDatabaseFasade extends DatabaseFasade {
         }
     }
 
-    public ArrayList<Point> getPorts() {
-        String query = "SELECT * FROM PUBLIC.PORTS";
+    public ArrayList<Port> getPorts() {
+        String query = "SELECT * FROM "+ tableNames[3];
         try {
-            ArrayList<Point> pointList = new ArrayList<>();
+            ArrayList<Port> pointList = new ArrayList<>();
             ResultSet rs = getQuery(query);
             while(rs.next())
-                pointList.add(new Point(rs.getFloat("latitude"),rs.getFloat("longitude"), rs.getString("datetime")));
+                pointList.add(new Port(rs.getString("PORTNAME"),rs.getString("COUNTRY"), rs.getFloat("latitude"),rs.getFloat("longitude")));
             return pointList;
         } catch(SQLException e) {
             System.err.println(e.getMessage());
