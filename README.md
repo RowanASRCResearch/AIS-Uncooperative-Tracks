@@ -6,8 +6,9 @@
  * CommonsCSV 1.1 - http://archive.apache.org/dist/commons/csv/binaries/commons-csv-1.1-bin.zip
 
 ## Database set up files
+all of these files will be under the DatabaseSetup directory
  * AIS Schema
  * AIS_DATA_PORTS
  * AIS_DATA_stations
  * AIS_DATA_Vessel_Data
-all of these files will be under the DatabaseSetup directory
+
