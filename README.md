@@ -10,4 +10,4 @@
  * AIS_DATA_PORTS
  * AIS_DATA_stations
  * AIS_DATA_Vessel_Data
- all of these files will be under the DatabaseSetup directory
+all of these files will be under the DatabaseSetup directory
