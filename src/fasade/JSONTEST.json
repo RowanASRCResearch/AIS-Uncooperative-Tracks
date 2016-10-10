@@ -1,0 +1,35 @@
+{
+  "driver":"com.mysql.jdbc.Driver",
+  "databaseName":"AIS_DATA",
+  "tableNames":[
+    "Vessel_Data",
+    "KML_Data",
+    "stations",
+    "ports"
+  ],
+  "columnNames":
+  {
+    "row":"ID",
+    "time":"DATE_TIME",
+    "id":"MMSI",
+    "latitude":"LATITUDE",
+    "longitude":"LONGITUDE",
+    "course":"COURSE",
+    "speed":"SPEED",
+    "heading":"HEADING",
+    "imo":"IMO",
+    "name":"VESSEL_NAME",
+    "callsign":"CALLSIGN",
+    "type":"AISTYPE",
+    "bowLength":"A",
+    "sternLength":"B",
+    "c":"C",
+    "d":"D",
+    "draught":"DRAUGHT",
+    "destination":"DESTINATION",
+    "eta":"ETA"
+  },
+  "user":"java_admin",
+  "password":"",
+  "columnNumbers":19
+}
