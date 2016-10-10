@@ -5,15 +5,11 @@ import com.google.gson.stream.JsonReader;
 import fasade.AisDatabaseFasade;
 import gathering.wind.RadiusGenerator;
 import io.KMLBuilder;
-
-import java.awt.geom.Area;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -67,7 +63,6 @@ public class Main {
         String tag;
         PathPredictor path = new PathPredictor();
 
-        //AreaGenerator gen = new AreaGenerator(vessel, travelTime, vesselTurnRate);
         ArrayList<GeoVector> buoys = new ArrayList<>();
         if (filePath != "")
             buoys = generateBuoys(filePath);
@@ -78,22 +73,18 @@ public class Main {
         ArrayList<ArrayList<Point>> results = new ArrayList<>();
         float leftBound = getLeftRightBounds(true, vesselHolder);
         float rightBound = getLeftRightBounds(false, vesselHolder);
-        //System.out.println("right " + rightBound);
-        //System.out.println("left " + leftBound);
 
         if (leftBound > rightBound) {
             for (float i = leftBound; i <= 360; i++) {
                 vesselHolder.vectorAngle = i;
                 vessel.speed = vesselSpeed;
                 results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, buoys));
-                //System.out.println(i);
             }
 
             for (float i = 1; i <= rightBound; i++) {
                 vesselHolder.vectorAngle = i;
                 vessel.speed = vesselSpeed;
                 results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, buoys));
-                //System.out.println(i);
             }
 
         } else {
@@ -102,7 +93,7 @@ public class Main {
                 vesselHolder.vectorAngle = i;
                 vessel.speed = vesselSpeed;
                 results.add(path.getPath(vesselHolder.location, vesselHolder.getSpeed(), vesselHolder.getAngle(), travelTime, buoys));
-                //System.out.println(i);
+
             }
         }
 
@@ -145,14 +136,7 @@ public class Main {
             System.out.println(buoys.get(i).location.latitude+","+buoys.get(i).location.longitude+","+buoys.get(i).getMagnitude()+","+buoys.get(i).getAngle());
         }
 
-       /* ArrayList<GeoVector> tempList = generateBuoys(filePath);
-        for (int i = 0; i < tempList.size(); i++) {
-            GeoVector temp = tempList.get(i);
-            System.out.println(temp.getSpeed() + "," + temp.getAngle());
-        }
-        System.out.println("LAST ELEMENT OF TEMPLIST: " + tempList.get(tempList.size()-1));
 
-*/
     }
 
 
@@ -219,7 +203,7 @@ public class Main {
                 int angle = rn.nextInt(360 - 0 + 1) + 0;
                 int sp = rn.nextInt(66 - 56 + 1) + 56;
                 buoys.add(new GeoVector(new Point(j, i), ((sp* 1.8519999985024f)/360)/100, (int)angle)); //knots to km per sec, angle));
-                //System.out.println(i + ", " + j);
+
             }
         }
 
@@ -240,7 +224,7 @@ public class Main {
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
             while ((thisLine = br.readLine()) != null) {
-                //System.out.println(thisLine);
+
                 result = thisLine;
                 points = result.split(",");
                 GeoVector temp = new GeoVector(new Point(Float.parseFloat(points[0]), Float.parseFloat(points[1])),
